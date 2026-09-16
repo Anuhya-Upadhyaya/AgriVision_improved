@@ -1,0 +1,5 @@
+# random_forest_soil_model.pkl is ~104.9MB, just over GitHub's 100MB hard
+# per-file limit — without Git LFS, `git push` will be rejected outright.
+# Track all model files with LFS for consistency (Render pulls LFS objects
+# automatically during build, no extra config needed on Render's side).
+backend/models/*.pkl filter=lfs diff=lfs merge=lfs -text

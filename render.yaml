@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: agrivision-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://agrivision-84da7.web.app,https://agrivision-84da7.firebaseapp.com
+    healthCheckPath: /health

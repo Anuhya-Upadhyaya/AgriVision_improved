@@ -1,0 +1,10 @@
+backend/__pycache__/
+backend/venv/
+.env
+.DS_Store
+.firebase/
+
+.vscode/
+
+research_assets/
+Team13_Phase4_.ipynb

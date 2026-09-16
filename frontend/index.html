@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- =====================================================
+       BASIC META
+  ====================================================== -->
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta
+    name="theme-color"
+    content="#1f7a4d"
+  >
+
+  <meta
+    name="description"
+    content="AgriVision - AI-powered smart agriculture and soil intelligence platform"
+  >
+
+
+  <!-- =====================================================
+       PWA
+  ====================================================== -->
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  >
+
+  <link
+    rel="icon"
+    href="icons/icon-192.png"
+  >
+
+  <link
+    rel="apple-touch-icon"
+    href="icons/icon-192.png"
+  >
+
+
+  <!-- =====================================================
+       STYLES
+  ====================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+
+  <!-- =====================================================
+       CHART.JS
+  ====================================================== -->
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"
+  ></script>
+
+
+  <title>
+    AgriVision | Smart Agriculture
+  </title>
+
+</head>
+
+
+
+<body>
+
+
+<!-- =====================================================
+     APPLICATION SHELL
+===================================================== -->
+
+<main class="app-shell">
+
+
+<!-- =====================================================
+     GLOBAL LOADING OVERLAY
+===================================================== -->
+
+<div
+  id="globalLoader"
+  class="global-loader hidden"
+>
+
+  <div class="loader-card">
+
+    <div class="loader-spinner"></div>
+
+    <h3 id="loaderTitle">
+      Processing...
+    </h3>
+
+    <p id="loaderText">
+      Please wait while AgriVision processes your request.
+    </p>
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     SPLASH / GET STARTED VIEW
+
+     This is the very first screen anyone sees, whether or not they
+     already have an account. It never signs anyone in by itself —
+     pressing "Get Started" only reveals the Login/Create Account
+     screen below (or, for a visitor who already has an active
+     Firebase session, the dashboard). No credentials are read or
+     submitted until the farmer explicitly fills in and submits the
+     Login form.
+===================================================== -->
+
+<section
+  id="splashView"
+  class="view active"
+>
+
+  <div class="auth-card splash-card">
+
+    <div class="brand-mark">
+      🌱
+    </div>
+
+    <h1>
+      AgriVision
+    </h1>
+
+    <p class="muted">
+      AI-Powered Smart Agriculture &amp; Soil Intelligence
+    </p>
+
+    <p class="muted splash-tagline">
+      Analyze your soil, get instant AI-backed nitrogen
+      predictions, and grow smarter with personalized,
+      farmer-friendly recommendations.
+    </p>
+
+    <button
+      id="getStartedButton"
+      class="primary"
+      type="button"
+    >
+      Get Started →
+    </button>
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     AUTHENTICATION VIEW
+===================================================== -->
+
+<section
+  id="authView"
+  class="view hidden"
+>
+
+
+  <div class="auth-card">
+
+
+    <!-- BRAND -->
+
+    <div class="brand-mark">
+      🌱
+    </div>
+
+
+    <h1>
+      AgriVision
+    </h1>
+
+
+    <p class="muted">
+
+      AI-powered soil intelligence for smarter
+      agricultural decisions.
+
+    </p>
+
+
+
+    <!-- =================================================
+         AUTH TABS
+    ================================================= -->
+
+    <div class="tabs">
+
+
+      <button
+        class="tab active"
+        data-auth-tab="login"
+        type="button"
+      >
+
+        Login
+
+      </button>
+
+
+
+      <button
+        class="tab"
+        data-auth-tab="signup"
+        type="button"
+      >
+
+        Create Account
+
+      </button>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         LOGIN FORM
+    ================================================= -->
+
+    <form
+      id="loginForm"
+      class="auth-form"
+    >
+
+
+      <label>
+
+        Email Address
+
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="Enter your email"
+          required
+        >
+
+      </label>
+
+
+
+      <label>
+
+        Password
+
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter your password"
+          required
+        >
+
+      </label>
+
+
+
+      <button
+        id="loginButton"
+        class="primary"
+        type="submit"
+      >
+
+        Login
+
+      </button>
+
+
+
+      <button
+        id="forgotPassword"
+        class="link-button"
+        type="button"
+      >
+
+        Forgot Password?
+
+      </button>
+
+
+    </form>
+
+
+
+    <!-- =================================================
+         SIGNUP FORM
+    ================================================= -->
+
+    <form
+      id="signupForm"
+      class="auth-form hidden"
+    >
+
+
+      <label>
+
+        Full Name
+
+        <input
+          id="signupName"
+          type="text"
+          autocomplete="name"
+          minlength="2"
+          maxlength="80"
+          placeholder="Enter your full name"
+          required
+        >
+
+      </label>
+
+
+
+      <label>
+
+        Email Address
+
+        <input
+          id="signupEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="Enter your email"
+          required
+        >
+
+      </label>
+
+
+
+      <label>
+
+        Password
+
+        <input
+          id="signupPassword"
+          type="password"
+          autocomplete="new-password"
+          minlength="8"
+          placeholder="Minimum 8 characters"
+          required
+        >
+
+      </label>
+
+
+
+      <label>
+
+        Confirm Password
+
+        <input
+          id="signupConfirm"
+          type="password"
+          autocomplete="new-password"
+          minlength="8"
+          placeholder="Re-enter your password"
+          required
+        >
+
+      </label>
+
+
+
+      <button
+        id="signupButton"
+        class="primary"
+        type="submit"
+      >
+
+        Create Account
+
+      </button>
+
+
+    </form>
+
+
+
+    <!-- AUTH MESSAGE -->
+
+    <p
+      id="authMessage"
+      class="message hidden"
+    ></p>
+
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     PERSISTENT NAVIGATION
+     Hidden while signed out. On laptop/desktop this renders
+     as a top nav bar (.app-nav); on phones/tablets it renders
+     as a fixed bottom nav bar (.bottom-nav). Both use the same
+     data-nav attribute the rest of the app already uses for
+     view switching, and both stay in sync with the active view.
+===================================================== -->
+
+<nav
+  id="appNav"
+  class="app-nav hidden"
+>
+  <button type="button" data-nav="dashboard"><span>🏠</span> Dashboard</button>
+  <button type="button" data-nav="analysis"><span>🧪</span> Analyze</button>
+  <button type="button" data-nav="history"><span>📚</span> History</button>
+  <button type="button" data-nav="visualization"><span>📊</span> Soil Health</button>
+  <button type="button" data-nav="profile"><span>👤</span> Profile</button>
+</nav>
+
+<nav
+  id="bottomNav"
+  class="bottom-nav hidden"
+>
+  <button type="button" data-nav="dashboard"><span>🏠</span>Home</button>
+  <button type="button" data-nav="analysis"><span>🧪</span>Analyze</button>
+  <button type="button" data-nav="history"><span>📚</span>History</button>
+  <button type="button" data-nav="visualization"><span>📊</span>Soil</button>
+  <button type="button" data-nav="profile"><span>👤</span>Profile</button>
+</nav>
+
+
+
+<!-- =====================================================
+     DASHBOARD VIEW
+===================================================== -->
+
+<section
+  id="dashboardView"
+  class="view hidden"
+>
+
+
+  <!-- =================================================
+       TOPBAR
+  ================================================= -->
+
+  <header class="topbar">
+
+
+    <div>
+
+
+      <span class="eyebrow">
+
+        AGRIVISION
+
+      </span>
+
+
+      <h2 id="welcomeName">
+
+        Welcome
+
+      </h2>
+
+
+    </div>
+
+
+
+    <div class="topbar-actions">
+
+
+      <button
+        id="logoutButton"
+        class="ghost"
+        type="button"
+      >
+
+        Log Out
+
+      </button>
+
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- =================================================
+       INTRO
+  ================================================= -->
+
+  <div class="dashboard-intro">
+
+
+    <h2>
+
+      Smart Agriculture Dashboard
+
+    </h2>
+
+
+    <p class="muted">
+
+      Analyze your farm soil using AgriVision's
+      AI-powered machine-learning ensemble system.
+
+    </p>
+
+
+  </div>
+
+
+
+  <!-- =================================================
+       INPUT & ANALYSIS
+  ================================================= -->
+
+  <section class="dashboard-section">
+
+
+    <h3 class="dashboard-section-title">
+
+      📥 Input & Analysis
+
+    </h3>
+
+
+
+    <div class="dashboard-grid">
+
+
+      <!-- MANUAL ANALYSIS -->
+
+      <button
+        class="feature-card"
+        data-nav="analysis"
+        type="button"
+      >
+
+
+        <span class="feature-icon">
+          🧪
+        </span>
+
+
+        <h3>
+
+          Manual Soil Analysis
+
+        </h3>
+
+
+        <p>
+
+          Enter soil nutrients and environmental
+          conditions for AI-powered analysis.
+
+        </p>
+
+
+        <span class="card-action">
+
+          Start Analysis →
+
+        </span>
+
+
+      </button>
+
+
+
+      <!-- SOIL REPORT -->
+
+      <button
+        class="feature-card"
+        data-nav="report"
+        type="button"
+      >
+
+
+        <span class="feature-icon">
+          📄
+        </span>
+
+
+        <h3>
+
+          Soil Report Analysis
+
+        </h3>
+
+
+        <p>
+
+          Upload a soil laboratory report and extract
+          useful soil information for analysis.
+
+        </p>
+
+
+        <span class="card-action">
+
+          Upload Report →
+
+        </span>
+
+
+      </button>
+
+
+
+      <!-- IMAGE ANALYSIS -->
+
+      <button
+        class="feature-card"
+        data-nav="image"
+        type="button"
+      >
+
+
+        <span class="feature-icon">
+          📷
+        </span>
+
+
+        <h3>
+
+          Soil Image Analysis
+
+        </h3>
+
+
+        <p>
+
+          Upload a soil or farm image for future
+          AI-powered visual intelligence.
+
+        </p>
+
+
+        <span class="card-action">
+
+          Upload Image →
+
+        </span>
+
+
+      </button>
+
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- =================================================
+       SOIL INTELLIGENCE
+  ================================================= -->
+
+  <section class="dashboard-section">
+
+
+    <h3 class="dashboard-section-title">
+
+      📊 Soil Intelligence
+
+    </h3>
+
+
+
+    <div class="dashboard-grid">
+
+
+      <!-- VISUALIZATION -->
+
+      <button
+        class="feature-card visualization-card"
+        data-nav="visualization"
+        type="button"
+      >
+
+
+        <span class="feature-icon">
+          📊
+        </span>
+
+
+        <h3>
+
+          Visualization Dashboard
+
+        </h3>
+
+
+        <p>
+
+          Explore nutrient levels, environmental conditions
+          and AI predictions through interactive charts.
+
+        </p>
+
+
+        <span class="card-action">
+
+          View Dashboard →
+
+        </span>
+
+
+      </button>
+
+
+
+      <!-- HISTORY -->
+
+      <button
+        class="feature-card"
+        data-nav="history"
+        type="button"
+      >
+
+
+        <span class="feature-icon">
+          📚
+        </span>
+
+
+        <h3>
+
+          Prediction History
+
+        </h3>
+
+
+        <p>
+
+          Review previous analyses and monitor your
+          soil intelligence results over time.
+
+        </p>
+
+
+        <span class="card-action">
+
+          View History →
+
+        </span>
+
+
+      </button>
+
+
+    </div>
+
+
+  </section>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     MANUAL ANALYSIS VIEW
+===================================================== -->
+
+<section
+  id="analysisView"
+  class="view hidden"
+>
+
+
+  <header class="page-header">
+
+
+    <button
+      class="back"
+      data-nav="dashboard"
+      type="button"
+      aria-label="Back to dashboard"
+    >
+
+      ←
+
+    </button>
+
+
+
+    <div>
+
+
+      <span class="eyebrow">
+
+        LAND ANALYSIS
+
+      </span>
+
+
+      <h2>
+
+        Analyze Your Farm
+
+      </h2>
+
+
+    </div>
+
+
+  </header>
+
+
+
+  <p class="page-description">
+
+    Enter soil and environmental information.
+    AgriVision automatically prepares the required features
+    and uses the available machine-learning models.
+
+  </p>
+
+
+
+  <form
+    id="analysisForm"
+    class="analysis-form"
+  >
+
+
+
+    <!-- =================================================
+         LOCATION
+    ================================================= -->
+
+    <div class="section-card">
+
+
+      <h3>
+
+        📍 Farm Location
+
+      </h3>
+
+
+
+      <div class="two-col">
+
+
+        <!-- STATE -->
+
+        <label>
+
+          State / Union Territory
+
+          <select id="state">
+
+            <option value="">
+
+              Select State / UT 
+
+            </option>
+
+          </select>
+
+
+          <span class="input-hint">
+
+            Optional contextual information.
+
+          </span>
+
+        </label>
+
+
+
+        <!-- DISTRICT -->
+
+        <label>
+
+          District
+
+          <select
+            id="district"
+            required disabled
+          >
+
+            <option value="">
+
+              Loading districts...
+
+            </option>
+
+          </select>
+
+
+          <span class="input-hint">
+
+            Used to calculate district reference values.
+
+          </span>
+
+        </label>
+
+
+      </div>
+
+
+
+      <!-- VILLAGE -->
+
+      <label>
+
+        Village / Area
+
+        <span class="optional-tag">
+
+          Optional
+
+        </span>
+
+
+        <input
+          id="village"
+          type="text"
+          maxlength="100"
+          placeholder="Enter village or area"
+        >
+
+      </label>
+
+
+
+      <p class="hint">
+
+        District information is validated using the
+        AgriVision dataset. State and village provide
+        additional contextual information.
+
+      </p>
+
+
+
+      <div
+        id="districtInfo"
+        class="location-info hidden"
+      ></div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         FARM DETAILS
+    ================================================= -->
+
+    <div class="section-card">
+
+
+      <h3>
+
+        🌾 Farm Details
+
+      </h3>
+
+
+
+      <div class="two-col">
+
+
+        <!-- CROP -->
+
+        <label>
+
+          Main Crop
+
+          <select
+            id="crop"
+            required
+          >
+
+            <option value="">
+              Select Crop
+            </option>
+
+            <option value="Rice">
+              Rice
+            </option>
+
+            <option value="Wheat">
+              Wheat
+            </option>
+
+            <option value="Maize">
+              Maize
+            </option>
+
+            <option value="Cotton">
+              Cotton
+            </option>
+
+            <option value="Sugarcane">
+              Sugarcane
+            </option>
+
+            <option value="Tomato">
+              Tomato
+            </option>
+
+            <option value="Potato">
+              Potato
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </label>
+
+
+
+        <!-- FARM SIZE -->
+
+        <label>
+
+          Farm Size (Acres)
+
+          <input
+            id="farmSize"
+            type="number"
+            min="0.1"
+            step="0.1"
+            placeholder="Example: 2.5"
+            required
+          >
+
+
+          <span class="input-hint">
+
+            Required by the prediction models.
+
+          </span>
+
+        </label>
+
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         SOIL NUTRIENTS
+    ================================================= -->
+
+    <div class="section-card">
+
+
+      <h3>
+
+        🧪 Soil Nutrient Levels
+
+      </h3>
+
+
+      <p class="hint">
+
+        Enter values from your latest soil test
+        or farm records.
+
+      </p>
+
+
+
+      <div class="two-col">
+
+
+        <label>
+
+          Phosphorus (P)
+
+          <input
+            id="phosphorus"
+            type="number"
+            min="10"
+            max="120"
+            step="0.1"
+            placeholder="10 – 120"
+            required
+          >
+
+          <span class="input-hint">
+
+            Allowed range: 10 – 120
+
+          </span>
+
+        </label>
+
+
+
+        <label>
+
+          Potassium (K)
+
+          <input
+            id="potassium"
+            type="number"
+            min="50"
+            max="300"
+            step="0.1"
+            placeholder="50 – 300"
+            required
+          >
+
+          <span class="input-hint">
+
+            Allowed range: 50 – 300
+
+          </span>
+
+        </label>
+
+
+      </div>
+
+
+
+      <label>
+
+        Soil pH
+
+        <input
+          id="ph"
+          type="number"
+          min="5.5"
+          max="8.5"
+          step="0.1"
+          placeholder="5.5 – 8.5"
+          required
+        >
+
+        <span class="input-hint">
+
+          Allowed range: 5.5 – 8.5
+
+        </span>
+
+      </label>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         ENVIRONMENT
+    ================================================= -->
+
+    <div class="section-card">
+
+
+      <h3>
+
+        🌦️ Environmental Conditions
+
+      </h3>
+
+
+
+      <div class="two-col">
+
+
+        <label>
+
+          Annual Rainfall (mm)
+
+          <input
+            id="rainfall"
+            type="number"
+            min="200"
+            max="2000"
+            step="0.1"
+            placeholder="200 – 2000"
+            required
+          >
+
+        </label>
+
+
+
+        <label>
+
+          Average Temperature (°C)
+
+          <input
+            id="temperature"
+            type="number"
+            min="15"
+            max="40"
+            step="0.1"
+            placeholder="15 – 40"
+            required
+          >
+
+        </label>
+
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- ANALYSIS BUTTON -->
+
+    <button
+      id="predictButton"
+      class="primary"
+      type="submit"
+    >
+
+      🌱 Analyze My Land
+
+    </button>
+
+
+
+    <p
+      id="analysisMessage"
+      class="message hidden"
+    ></p>
+
+
+  </form>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     SOIL REPORT VIEW
+===================================================== -->
+
+<section
+  id="reportView"
+  class="view hidden"
+>
+
+
+  <header class="page-header">
+
+
+    <button
+      class="back"
+      data-nav="dashboard"
+      type="button"
+    >
+
+      ←
+
+    </button>
+
+
+    <div>
+
+      <span class="eyebrow">
+        SOIL REPORT
+      </span>
+
+      <h2>
+        Upload Soil Report
+      </h2>
+
+    </div>
+
+
+  </header>
+
+
+
+  <div class="section-card">
+
+
+    <h3>
+      📄 Laboratory Soil Report
+    </h3>
+
+
+    <p class="hint">
+
+      Upload a soil report in PDF format.
+      AgriVision will scan it and pull out any nutrient
+      and environmental values it can find — you'll get a
+      chance to review and correct them before analysis.
+
+    </p>
+
+
+
+    <label class="file-upload-box">
+
+      <input
+        id="soilReportFile"
+        type="file"
+        accept="application/pdf"
+      >
+
+      <span>
+        📄 Choose Soil Report (PDF)
+      </span>
+
+    </label>
+
+
+
+    <p
+      id="reportFileName"
+      class="hint"
+    ></p>
+
+
+
+    <button
+      id="processReportButton"
+      class="primary"
+      type="button"
+      disabled
+    >
+
+      Process Report
+
+    </button>
+
+
+
+    <p
+      id="reportMessage"
+      class="message hidden"
+    ></p>
+
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     IMAGE ANALYSIS VIEW
+===================================================== -->
+
+<section
+  id="imageView"
+  class="view hidden"
+>
+
+
+  <header class="page-header">
+
+
+    <button
+      class="back"
+      data-nav="dashboard"
+      type="button"
+    >
+
+      ←
+
+    </button>
+
+
+    <div>
+
+      <span class="eyebrow">
+        IMAGE ANALYSIS
+      </span>
+
+      <h2>
+        Upload Soil Image
+      </h2>
+
+    </div>
+
+
+  </header>
+
+
+
+  <div class="section-card">
+
+
+    <h3>
+      📷 Farm / Soil Image
+    </h3>
+
+
+    <p class="hint">
+
+      Upload a photo of a printed soil report, or take a
+      photo with your camera. AgriVision will try to read
+      any values it can from the image — a plain photo of
+      soil or farmland won't contain measurable values, and
+      that's okay, you can fill those in manually.
+
+    </p>
+
+
+
+    <div class="image-input-row">
+
+      <label class="file-upload-box">
+
+        <input
+          id="soilImageFile"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+        >
+
+        <span>
+          🖼️ Choose from Gallery
+        </span>
+
+      </label>
+
+      <label class="file-upload-box camera-upload-box">
+
+        <input
+          id="soilImageCameraFile"
+          type="file"
+          accept="image/*"
+          capture="environment"
+        >
+
+        <span>
+          📷 Take Photo
+        </span>
+
+      </label>
+
+    </div>
+
+
+
+    <img
+      id="imagePreview"
+      class="image-preview hidden"
+      alt="Selected soil preview"
+    >
+
+    <button
+      id="retakeImageButton"
+      class="secondary hidden"
+      type="button"
+    >
+
+      Retake / Choose Different Photo
+
+    </button>
+
+
+
+    <button
+      id="processImageButton"
+      class="primary"
+      type="button"
+      disabled
+    >
+
+      Analyze Image
+
+    </button>
+
+
+
+    <p
+      id="imageMessage"
+      class="message hidden"
+    ></p>
+
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     RESULT VIEW
+===================================================== -->
+
+<section
+  id="resultView"
+  class="view hidden"
+>
+
+
+  <header class="page-header">
+
+
+    <button
+      class="back"
+      data-nav="analysis"
+      type="button"
+    >
+
+      ←
+
+    </button>
+
+
+    <div>
+
+      <span class="eyebrow">
+        ANALYSIS RESULT
+      </span>
+
+      <h2>
+        Soil Intelligence Report
+      </h2>
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- HERO -->
+
+  <div class="hero-result">
+
+
+    <span>
+      Predicted Nitrogen Level
+    </span>
+
+
+    <strong id="finalPrediction">
+      --
+    </strong>
+
+
+    <small id="resultStatus">
+      --
+    </small>
+
+
+  </div>
+
+
+
+  <!-- MODEL AGREEMENT -->
+
+  <div
+    id="agreementBadge"
+    class="agreement-badge"
+  >
+    --
+  </div>
+
+
+
+  <!-- FARM INFORMATION -->
+
+  <div class="section-card">
+
+
+    <h3>
+      📍 Farm Information
+    </h3>
+
+
+    <div
+      id="resultFarm"
+      class="result-grid"
+    ></div>
+
+
+  </div>
+
+
+
+  <!-- DISTRICT INFORMATION -->
+
+  <div class="section-card">
+
+
+    <h3>
+      🧮 District Reference Values
+    </h3>
+
+
+    <div
+      id="resultDistrict"
+      class="result-grid"
+    ></div>
+
+
+  </div>
+
+
+
+  <!-- NUTRIENT CHART -->
+
+  <div class="section-card">
+
+
+    <h3>
+      📊 Soil Nutrient Visualization
+    </h3>
+
+
+    <div class="chart-wrap">
+
+      <canvas
+        id="nutrientChart"
+      ></canvas>
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- FACTOR CHART -->
+
+  <div class="section-card">
+
+
+    <h3>
+      🔎 Factor Impact Analysis
+    </h3>
+
+
+    <div class="chart-wrap">
+
+      <canvas
+        id="causeChart"
+      ></canvas>
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- TREND -->
+
+  <div class="section-card">
+
+
+    <h3>
+      📈 Your Soil Trend
+    </h3>
+
+
+    <div class="chart-wrap">
+
+      <canvas
+        id="trendChart"
+      ></canvas>
+
+    </div>
+
+
+    <p
+      id="trendEmpty"
+      class="hint hidden"
+    >
+
+      Complete at least two analyses to view your trend.
+
+    </p>
+
+
+  </div>
+
+
+
+  <!-- RECOMMENDATIONS -->
+
+  <div class="section-card">
+
+
+    <h3>
+      💡 Recommendations
+    </h3>
+
+
+    <div
+      id="resultRecommendations"
+      class="reco-list"
+    ></div>
+
+
+  </div>
+
+
+
+  <!-- MODEL RESULTS -->
+
+  <div class="section-card">
+
+
+    <h3>
+      🤖 Ensemble Model Analysis
+    </h3>
+
+
+    <div
+      id="modelResults"
+      class="model-list"
+    ></div>
+
+
+  </div>
+
+
+
+  <!-- ACTIONS -->
+
+  <div class="result-actions">
+
+
+    <button
+      class="secondary"
+      data-nav="visualization"
+      type="button"
+    >
+
+      📊 Visualization Dashboard
+
+    </button>
+
+
+
+    <button
+      id="newAnalysis"
+      class="primary"
+      type="button"
+    >
+
+      🌱 New Analysis
+
+    </button>
+
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     VISUALIZATION DASHBOARD
+===================================================== -->
+
+<section
+  id="visualizationView"
+  class="view hidden"
+>
+
+
+  <header class="page-header">
+
+
+    <button
+      class="back"
+      data-nav="dashboard"
+      type="button"
+    >
+
+      ←
+
+    </button>
+
+
+    <div>
+
+      <span class="eyebrow">
+        VISUALIZATION
+      </span>
+
+      <h2>
+        Soil Intelligence Dashboard
+      </h2>
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- EMPTY STATE -->
+
+  <div
+    id="visualizationEmpty"
+    class="section-card"
+  >
+
+
+    <h3>
+      No Analysis Available Yet
+    </h3>
+
+
+    <p class="muted">
+
+      Complete a land analysis to generate
+      your personalized soil intelligence dashboard.
+
+    </p>
+
+
+    <button
+      class="primary"
+      data-nav="analysis"
+      type="button"
+    >
+
+      Start Analysis
+
+    </button>
+
+
+  </div>
+
+
+
+  <!-- CONTENT -->
+
+  <div
+    id="visualizationContent"
+    class="hidden"
+  >
+
+
+    <!-- STATS -->
+
+    <div class="stats-grid">
+
+
+      <div class="stat-card">
+
+        <span>🧪</span>
+
+        <small>
+          Phosphorus
+        </small>
+
+        <strong id="vizPhosphorus">
+          --
+        </strong>
+
+      </div>
+
+
+
+      <div class="stat-card">
+
+        <span>⚗️</span>
+
+        <small>
+          Potassium
+        </small>
+
+        <strong id="vizPotassium">
+          --
+        </strong>
+
+      </div>
+
+
+
+      <div class="stat-card">
+
+        <span>🌱</span>
+
+        <small>
+          Soil pH
+        </small>
+
+        <strong id="vizPh">
+          --
+        </strong>
+
+      </div>
+
+
+
+      <div class="stat-card">
+
+        <span>🧠</span>
+
+        <small>
+          Predicted Nitrogen
+        </small>
+
+        <strong id="vizNitrogen">
+          --
+        </strong>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- NUTRIENT CHART -->
+
+    <div class="section-card">
+
+
+      <h3>
+        🧪 Nutrient Levels
+      </h3>
+
+
+      <div class="chart-wrap">
+
+        <canvas
+          id="dashboardNutrientChart"
+        ></canvas>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- ENVIRONMENT -->
+
+    <div class="section-card">
+
+
+      <h3>
+        🌦️ Environmental Conditions
+      </h3>
+
+
+      <div class="chart-wrap">
+
+        <canvas
+          id="environmentChart"
+        ></canvas>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- SOIL HEALTH -->
+
+    <div class="section-card">
+
+
+      <h3>
+        🌱 Soil Health Summary
+      </h3>
+
+
+      <div
+        id="soilHealthSummary"
+        class="result-grid"
+      ></div>
+
+
+    </div>
+
+
+
+    <!-- FACTORS -->
+
+    <div class="section-card">
+
+
+      <h3>
+        🔎 Key Influencing Factors
+      </h3>
+
+
+      <div
+        id="visualizationFactors"
+        class="factor-list"
+      ></div>
+
+
+    </div>
+
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     HISTORY VIEW
+===================================================== -->
+
+<section
+  id="historyView"
+  class="view hidden"
+>
+
+
+  <header class="page-header">
+
+
+    <button
+      class="back"
+      data-nav="dashboard"
+      type="button"
+    >
+
+      ←
+
+    </button>
+
+
+    <div>
+
+      <span class="eyebrow">
+        HISTORY
+      </span>
+
+      <h2>
+        My Predictions
+      </h2>
+
+    </div>
+
+
+  </header>
+
+
+
+  <p class="page-description">
+
+    Review previous farm analyses and monitor
+    predicted nitrogen levels over time.
+
+  </p>
+
+
+
+  <div
+    id="historyList"
+    class="history-list"
+  >
+
+
+    <p class="muted">
+
+      Loading prediction history...
+
+    </p>
+
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     PROFILE VIEW
+===================================================== -->
+
+<section
+  id="profileView"
+  class="view hidden"
+>
+
+  <header class="page-header">
+
+    <button
+      class="back"
+      data-nav="dashboard"
+      type="button"
+    >
+      ←
+    </button>
+
+    <div>
+      <span class="eyebrow">PROFILE</span>
+      <h2>My Account</h2>
+    </div>
+
+  </header>
+
+  <div class="section-card">
+
+    <h3>👤 Account Details</h3>
+
+    <div class="location-info">
+      <strong>Name</strong>
+      <p id="profileName">—</p>
+    </div>
+
+    <div class="location-info" style="margin-top:10px">
+      <strong>Email</strong>
+      <p id="profileEmail">—</p>
+    </div>
+
+    <button
+      id="profileLogoutButton"
+      class="secondary"
+      type="button"
+      style="margin-top:18px"
+    >
+      Log Out
+    </button>
+
+  </div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     APPLICATION JAVASCRIPT
+===================================================== -->
+
+<script
+  type="module"
+  src="app.js"
+></script>
+
+
+
+<!-- =====================================================
+     SERVICE WORKER
+===================================================== -->
+
+<script>
+
+  if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+      navigator.serviceWorker
+        .register("service-worker.js")
+        .catch((error) => {
+
+          console.error(
+            "Service Worker registration failed:",
+            error
+          );
+
+        });
+
+    });
+
+  }
+
+</script>
+
+
+</body>
+
+</html>
