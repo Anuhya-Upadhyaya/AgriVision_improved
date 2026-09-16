@@ -896,9 +896,9 @@ function showView(viewId) {
 
 
   document
-    .querySelectorAll(
-      "#appNav [data-nav], #bottomNav [data-nav]"
-    )
+  .querySelectorAll(
+    "#appNav [data-nav]"
+  )
     .forEach(button => {
 
       button.classList.toggle(
@@ -3272,15 +3272,19 @@ function renderVisualizationDashboard() {
     );
 
 
-  renderDashboardNutrientChart(
-    values
-  );
+  requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
 
+    renderDashboardNutrientChart(
+      values
+    );
 
-  renderEnvironmentChart(
-    values
-  );
+    renderEnvironmentChart(
+      values
+    );
 
+  });
+});
 
   renderSoilHealthSummary(
     values
@@ -3804,10 +3808,6 @@ onAuthStateChanged(
       );
 
 
-      $("bottomNav")?.classList.add(
-        "hidden"
-      );
-
 
       /*
        * A visitor who hasn't pressed "Get Started" yet should stay
@@ -3837,11 +3837,6 @@ onAuthStateChanged(
 
 
     $("appNav")?.classList.remove(
-      "hidden"
-    );
-
-
-    $("bottomNav")?.classList.remove(
       "hidden"
     );
 

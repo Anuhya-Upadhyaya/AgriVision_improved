@@ -88,11 +88,6 @@ input[type="date"],input[type="file"]{width:100%;margin-top:7px;padding:12px 14p
    Mobile: fixed bottom nav bar.
    Laptop/Desktop (>=1024px): top nav bar instead (see above).
 ========================================================= */
-
-.bottom-nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:#fff;border-top:1px solid #dfe9e2;padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(31,75,50,.06);z-index:20}
-.bottom-nav button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:#8a988f;padding:4px 2px}
-.bottom-nav button span{font-size:20px}
-.bottom-nav button.active{color:#1f7a4d}
 .app-nav{display:none;justify-content:center;gap:6px;margin-bottom:24px;background:#fff;border:1px solid #dfe9e2;border-radius:14px;padding:6px;width:fit-content}
 .app-nav button{border:0;background:transparent;padding:10px 18px;border-radius:10px;font-weight:700;color:#567064}
 .app-nav button.active{background:#eaf6ee;color:#1f7a4d}
@@ -118,3 +113,696 @@ input[type="date"],input[type="file"]{width:100%;margin-top:7px;padding:12px 14p
 .loader-card h3{margin:0 0 8px;color:#183026;font-size:18px}
 .loader-card p{margin:0;color:#557064;font-size:14px;line-height:1.5}
 @keyframes agrivision-spin{to{transform:rotate(360deg)}}
+/* =========================================================
+   AGRIVISION VISUAL DASHBOARD + TOP NAV UPDATE
+   Only affects navigation and visualization UI
+========================================================= */
+
+
+/* =========================================================
+   TOP RIGHT NAVIGATION
+========================================================= */
+
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 4px;
+
+  width: 100%;
+
+  margin: 0 0 28px 0;
+
+  padding: 8px 10px;
+
+  background: rgba(255,255,255,.96);
+
+  border: 1px solid #dfe9e2;
+
+  border-radius: 0 0 16px 16px;
+
+  box-shadow:
+    0 6px 22px rgba(31,75,50,.07);
+
+  backdrop-filter: blur(10px);
+}
+
+
+.app-nav button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #496257;
+
+  padding: 10px 13px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  transition:
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+
+.app-nav button span {
+  font-size: 17px;
+
+  line-height: 1;
+}
+
+
+.app-nav button:hover {
+  background: #f0f7f2;
+
+  color: #1f7a4d;
+
+  transform: translateY(-1px);
+}
+
+
+.app-nav button.active {
+  background: #eaf6ee;
+
+  color: #1f7a4d;
+}
+
+
+.profile-nav-button {
+  border: 1px solid #dfe9e2 !important;
+
+  border-radius: 999px !important;
+
+  padding: 7px 11px !important;
+
+  margin-left: 4px;
+
+  background: #fff !important;
+}
+
+
+.profile-nav-button:hover {
+  background: #f5faf6 !important;
+
+  border-color: #bcd9c7 !important;
+}
+
+
+.profile-nav-icon {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  border-radius: 50%;
+
+  background: #204d3a;
+
+  color: #fff !important;
+
+  font-size: 10px !important;
+}
+
+
+.profile-nav-arrow {
+  font-size: 13px !important;
+
+  color: #7c8d84;
+}
+
+
+/* =========================================================
+   REMOVE BOTTOM NAV COMPLETELY
+========================================================= */
+
+.bottom-nav {
+  display: none !important;
+}
+
+
+/* =========================================================
+   VISUALIZATION PAGE
+========================================================= */
+
+.visualization-dashboard {
+  width: 100%;
+}
+
+
+.visualization-header {
+  margin-bottom: 26px;
+}
+
+
+/* =========================================================
+   QUICK STAT CARDS
+========================================================= */
+
+.viz-stat-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 16px;
+}
+
+
+.viz-stat-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  min-height: 86px;
+
+  padding: 15px 17px;
+
+  background: #fff;
+
+  border: 1px solid #dfe9e2;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 7px 22px rgba(31,75,50,.05);
+}
+
+
+.viz-stat-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 42px;
+
+  border-radius: 12px;
+
+  background: #eef8f1;
+
+  font-size: 21px;
+}
+
+
+.viz-stat-card small {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #708078;
+
+  font-size: 11px;
+}
+
+
+.viz-stat-card strong {
+  display: block;
+
+  color: #183026;
+
+  font-size: 22px;
+
+  line-height: 1.1;
+}
+
+
+/* =========================================================
+   VISUALIZATION GRID
+========================================================= */
+
+.visualization-grid {
+  display: grid;
+
+  grid-template-columns:
+    1.35fr
+    .8fr
+    1.35fr;
+
+  gap: 14px;
+
+  align-items: stretch;
+}
+
+
+.viz-card {
+  min-width: 0;
+
+  background: #fff;
+
+  border: 1px solid #dfe9e2;
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  box-shadow:
+    0 8px 25px rgba(31,75,50,.05);
+}
+
+
+.viz-card-large {
+  min-height: 300px;
+}
+
+
+.viz-card-header {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+
+.viz-card-header > div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+
+.viz-card-icon {
+  font-size: 19px;
+
+  line-height: 1;
+}
+
+
+.viz-card h3 {
+  margin: 0;
+
+  color: #183026;
+
+  font-size: 17px;
+}
+
+
+.viz-card-subtitle {
+  color: #819087;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   CHART FIX
+   This gives Chart.js a real drawing area.
+========================================================= */
+
+.viz-chart-wrap {
+  position: relative;
+
+  width: 100%;
+
+  height: 260px;
+
+  min-height: 260px;
+
+  margin-top: 8px;
+}
+
+
+.viz-chart-wrap canvas {
+  display: block !important;
+
+  width: 100% !important;
+
+  height: 100% !important;
+
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   PH GAUGE
+========================================================= */
+
+.ph-gauge {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  height: 235px;
+}
+
+
+.ph-gauge-ring {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 165px;
+
+  height: 165px;
+
+  border-radius: 50%;
+
+  background:
+    conic-gradient(
+      #e0574c 0deg,
+      #e0a63c 75deg,
+      #a9d86e 130deg,
+      #4ba876 210deg,
+      #e9eee9 210deg
+    );
+
+  transform: rotate(-25deg);
+
+  transition: background .5s ease;
+}
+
+
+.ph-gauge-inner {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 125px;
+
+  height: 125px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  transform: rotate(25deg);
+
+  box-shadow:
+    inset 0 0 0 1px #edf2ee;
+}
+
+
+.ph-gauge-inner strong {
+  color: #183026;
+
+  font-size: 28px;
+}
+
+
+.ph-gauge-inner span {
+  margin-top: 3px;
+
+  color: #708078;
+
+  font-size: 11px;
+}
+
+
+.ph-scale {
+  display: flex;
+
+  justify-content: space-between;
+
+  width: 175px;
+
+  margin-top: 8px;
+
+  color: #8a988f;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   SCORE RINGS
+========================================================= */
+
+.score-card {
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+.score-ring {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 175px;
+
+  height: 175px;
+
+  margin: auto;
+
+  border-radius: 50%;
+
+  background:
+    conic-gradient(
+      #1f7a4d 0deg,
+      #3fa66d 245deg,
+      #dfeee4 245deg,
+      #dfeee4 360deg
+    );
+}
+
+
+.score-ring-inner {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 130px;
+
+  height: 130px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  box-shadow:
+    inset 0 0 0 1px #edf2ee;
+}
+
+
+.score-ring-inner strong {
+  color: #183026;
+
+  font-size: 27px;
+}
+
+
+.score-ring-inner span {
+  margin-top: 4px;
+
+  color: #718078;
+
+  font-size: 10px;
+
+  text-align: center;
+}
+
+
+.confidence-ring {
+  background:
+    conic-gradient(
+      #7770dc 0deg,
+      #9a8df0 260deg,
+      #e5e5f4 260deg,
+      #e5e5f4 360deg
+    );
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.summary-card {
+  margin-top: 14px;
+}
+
+
+.factor-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .viz-stat-row {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .visualization-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .viz-card-large {
+    grid-column: span 2;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .app-nav {
+    justify-content: flex-end;
+
+    overflow-x: auto;
+
+    border-radius: 0 0 14px 14px;
+
+    padding: 7px 5px;
+
+    gap: 2px;
+  }
+
+
+  .app-nav button {
+    flex: 0 0 auto;
+
+    padding: 9px 10px;
+
+    font-size: 11px;
+  }
+
+
+  .app-nav button span {
+    font-size: 15px;
+  }
+
+
+  .profile-nav-button {
+    margin-left: 0;
+  }
+
+
+  .viz-stat-row {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+  }
+
+
+  .viz-stat-card {
+    min-height: 75px;
+
+    padding: 12px;
+  }
+
+
+  .viz-stat-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-basis: 34px;
+
+    font-size: 17px;
+  }
+
+
+  .viz-stat-card strong {
+    font-size: 18px;
+  }
+
+
+  .visualization-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .viz-card-large {
+    grid-column: auto;
+  }
+
+
+  .viz-chart-wrap {
+    height: 260px;
+
+    min-height: 260px;
+  }
+
+}
+
+
+@media (max-width: 450px) {
+
+  .viz-stat-row {
+    grid-template-columns: 1fr;
+  }
+
+
+  .app-nav button strong {
+    display: none;
+  }
+
+
+  .app-nav button {
+    padding: 9px 11px;
+  }
+
+
+  .profile-nav-button strong {
+    display: inline;
+  }
+
+}

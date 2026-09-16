@@ -417,23 +417,37 @@
 <nav
   id="appNav"
   class="app-nav hidden"
+  aria-label="Main navigation"
 >
-  <button type="button" data-nav="dashboard"><span>🏠</span> Dashboard</button>
-  <button type="button" data-nav="analysis"><span>🧪</span> Analyze</button>
-  <button type="button" data-nav="history"><span>📚</span> History</button>
-  <button type="button" data-nav="visualization"><span>📊</span> Soil Health</button>
-  <button type="button" data-nav="profile"><span>👤</span> Profile</button>
-</nav>
+  <button type="button" data-nav="dashboard">
+    <span>⌂</span>
+    <strong>Home</strong>
+  </button>
 
-<nav
-  id="bottomNav"
-  class="bottom-nav hidden"
->
-  <button type="button" data-nav="dashboard"><span>🏠</span>Home</button>
-  <button type="button" data-nav="analysis"><span>🧪</span>Analyze</button>
-  <button type="button" data-nav="history"><span>📚</span>History</button>
-  <button type="button" data-nav="visualization"><span>📊</span>Soil</button>
-  <button type="button" data-nav="profile"><span>👤</span>Profile</button>
+  <button type="button" data-nav="analysis">
+    <span>🌱</span>
+    <strong>Analyze</strong>
+  </button>
+
+  <button type="button" data-nav="history">
+    <span>▥</span>
+    <strong>Reports</strong>
+  </button>
+
+  <button type="button" data-nav="visualization">
+    <span>▥</span>
+    <strong>Soil Health</strong>
+  </button>
+
+  <button
+    type="button"
+    data-nav="profile"
+    class="profile-nav-button"
+  >
+    <span class="profile-nav-icon">●</span>
+    <strong>Profile</strong>
+    <span class="profile-nav-arrow">⌄</span>
+  </button>
 </nav>
 
 
@@ -1780,28 +1794,27 @@
      VISUALIZATION DASHBOARD
 ===================================================== -->
 
+<!-- =====================================================
+     VISUALIZATION DASHBOARD
+===================================================== -->
+
 <section
   id="visualizationView"
   class="view hidden"
 >
 
-
-  <header class="page-header">
-
+  <header class="page-header visualization-header">
 
     <button
       class="back"
       data-nav="dashboard"
       type="button"
+      aria-label="Back to dashboard"
     >
-
       ←
-
     </button>
 
-
     <div>
-
       <span class="eyebrow">
         VISUALIZATION
       </span>
@@ -1809,12 +1822,9 @@
       <h2>
         Soil Intelligence Dashboard
       </h2>
-
     </div>
 
-
   </header>
-
 
 
   <!-- EMPTY STATE -->
@@ -1824,107 +1834,294 @@
     class="section-card"
   >
 
-
     <h3>
       No Analysis Available Yet
     </h3>
 
-
     <p class="muted">
-
       Complete a land analysis to generate
       your personalized soil intelligence dashboard.
-
     </p>
-
 
     <button
       class="primary"
       data-nav="analysis"
       type="button"
     >
-
       Start Analysis
-
     </button>
-
 
   </div>
 
 
-
-  <!-- CONTENT -->
+  <!-- =================================================
+       VISUALIZATION CONTENT
+  ================================================== -->
 
   <div
     id="visualizationContent"
-    class="hidden"
+    class="visualization-dashboard hidden"
   >
 
 
-    <!-- STATS -->
+    <!-- QUICK VALUES -->
 
-    <div class="stats-grid">
+    <div class="viz-stat-row">
+
+      <div class="viz-stat-card">
+        <span class="viz-stat-icon">🧪</span>
+
+        <div>
+          <small>
+            Phosphorus
+          </small>
+
+          <strong id="vizPhosphorus">
+            --
+          </strong>
+        </div>
+      </div>
 
 
-      <div class="stat-card">
+      <div class="viz-stat-card">
+        <span class="viz-stat-icon">⚗️</span>
 
-        <span>🧪</span>
+        <div>
+          <small>
+            Potassium
+          </small>
 
-        <small>
-          Phosphorus
-        </small>
+          <strong id="vizPotassium">
+            --
+          </strong>
+        </div>
+      </div>
 
-        <strong id="vizPhosphorus">
-          --
-        </strong>
+
+      <div class="viz-stat-card">
+        <span class="viz-stat-icon">🌱</span>
+
+        <div>
+          <small>
+            Soil pH
+          </small>
+
+          <strong id="vizPh">
+            --
+          </strong>
+        </div>
+      </div>
+
+
+      <div class="viz-stat-card">
+        <span class="viz-stat-icon">🧠</span>
+
+        <div>
+          <small>
+            Predicted Nitrogen
+          </small>
+
+          <strong id="vizNitrogen">
+            --
+          </strong>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         MAIN VISUALIZATION GRID
+    ================================================== -->
+
+    <div class="visualization-grid">
+
+
+      <!-- NUTRIENTS -->
+
+      <div class="viz-card viz-card-large">
+
+        <div class="viz-card-header">
+
+          <div>
+            <span class="viz-card-icon">
+              🧪
+            </span>
+
+            <h3>
+              Nutrient Levels
+            </h3>
+          </div>
+
+          <span class="viz-card-subtitle">
+            Current soil values
+          </span>
+
+        </div>
+
+
+        <div class="chart-wrap viz-chart-wrap">
+          <canvas id="dashboardNutrientChart"></canvas>
+        </div>
 
       </div>
 
 
+      <!-- SOIL PH -->
 
-      <div class="stat-card">
+      <div class="viz-card">
 
-        <span>⚗️</span>
+        <div class="viz-card-header">
 
-        <small>
-          Potassium
-        </small>
+          <div>
+            <span class="viz-card-icon">
+              🌱
+            </span>
 
-        <strong id="vizPotassium">
-          --
-        </strong>
+            <h3>
+              Soil pH
+            </h3>
+          </div>
+
+        </div>
+
+
+        <div class="ph-gauge">
+
+          <div
+            id="phGauge"
+            class="ph-gauge-ring"
+          >
+
+            <div class="ph-gauge-inner">
+
+              <strong id="phGaugeValue">
+                --
+              </strong>
+
+              <span id="phGaugeStatus">
+                --
+              </span>
+
+            </div>
+
+          </div>
+
+          <div class="ph-scale">
+            <span>4.0</span>
+            <span>5.5</span>
+            <span>7.0</span>
+            <span>8.5</span>
+            <span>9.0</span>
+          </div>
+
+        </div>
 
       </div>
 
 
+      <!-- ENVIRONMENT -->
 
-      <div class="stat-card">
+      <div class="viz-card viz-card-large">
 
-        <span>🌱</span>
+        <div class="viz-card-header">
 
-        <small>
-          Soil pH
-        </small>
+          <div>
+            <span class="viz-card-icon">
+              🌦️
+            </span>
 
-        <strong id="vizPh">
-          --
-        </strong>
+            <h3>
+              Rainfall & Temperature
+            </h3>
+          </div>
+
+          <span class="viz-card-subtitle">
+            Environmental conditions
+          </span>
+
+        </div>
+
+
+        <div class="chart-wrap viz-chart-wrap">
+          <canvas id="environmentChart"></canvas>
+        </div>
 
       </div>
 
 
+      <!-- FARM HEALTH -->
 
-      <div class="stat-card">
+      <div class="viz-card score-card">
 
-        <span>🧠</span>
+        <div class="viz-card-header">
 
-        <small>
-          Predicted Nitrogen
-        </small>
+          <div>
+            <span class="viz-card-icon">
+              🌿
+            </span>
 
-        <strong id="vizNitrogen">
-          --
-        </strong>
+            <h3>
+              Farm Health Score
+            </h3>
+          </div>
+
+        </div>
+
+
+        <div class="score-ring">
+
+          <div class="score-ring-inner">
+
+            <strong id="farmHealthScore">
+              --
+            </strong>
+
+            <span>
+              Soil Health
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MODEL AGREEMENT -->
+
+      <div class="viz-card score-card">
+
+        <div class="viz-card-header">
+
+          <div>
+            <span class="viz-card-icon">
+              🤖
+            </span>
+
+            <h3>
+              Prediction Confidence
+            </h3>
+          </div>
+
+        </div>
+
+
+        <div class="score-ring confidence-ring">
+
+          <div class="score-ring-inner">
+
+            <strong id="predictionAgreement">
+              --
+            </strong>
+
+            <span>
+              Model Agreement
+            </span>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -1932,61 +2129,25 @@
     </div>
 
 
+    <!-- =================================================
+         SOIL HEALTH SUMMARY
+    ================================================== -->
 
-    <!-- NUTRIENT CHART -->
+    <div class="viz-card summary-card">
 
-    <div class="section-card">
+      <div class="viz-card-header">
 
+        <div>
+          <span class="viz-card-icon">
+            🌱
+          </span>
 
-      <h3>
-        🧪 Nutrient Levels
-      </h3>
-
-
-      <div class="chart-wrap">
-
-        <canvas
-          id="dashboardNutrientChart"
-        ></canvas>
-
-      </div>
-
-
-    </div>
-
-
-
-    <!-- ENVIRONMENT -->
-
-    <div class="section-card">
-
-
-      <h3>
-        🌦️ Environmental Conditions
-      </h3>
-
-
-      <div class="chart-wrap">
-
-        <canvas
-          id="environmentChart"
-        ></canvas>
+          <h3>
+            Soil Health Summary
+          </h3>
+        </div>
 
       </div>
-
-
-    </div>
-
-
-
-    <!-- SOIL HEALTH -->
-
-    <div class="section-card">
-
-
-      <h3>
-        🌱 Soil Health Summary
-      </h3>
 
 
       <div
@@ -1994,19 +2155,28 @@
         class="result-grid"
       ></div>
 
-
     </div>
 
 
+    <!-- =================================================
+         KEY FACTORS
+    ================================================== -->
 
-    <!-- FACTORS -->
+    <div class="viz-card summary-card">
 
-    <div class="section-card">
+      <div class="viz-card-header">
 
+        <div>
+          <span class="viz-card-icon">
+            🔎
+          </span>
 
-      <h3>
-        🔎 Key Influencing Factors
-      </h3>
+          <h3>
+            Key Influencing Factors
+          </h3>
+        </div>
+
+      </div>
 
 
       <div
@@ -2014,15 +2184,11 @@
         class="factor-list"
       ></div>
 
-
     </div>
-
 
   </div>
 
-
 </section>
-
 
 
 <!-- =====================================================
