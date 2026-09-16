@@ -95,7 +95,8 @@ DEFAULT_ORIGINS = ",".join([
     "http://127.0.0.1:5500",
     "http://127.0.0.1:8000",
     "https://agrivision-84da7.web.app",
-    "https://agrivision-84da7.firebaseapp.com"
+    "https://agrivision-84da7.firebaseapp.com",
+    "https://agrivision-application.web.app"
 ])
 
 
