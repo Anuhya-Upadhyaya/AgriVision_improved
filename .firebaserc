@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "agrivision-84da7"
-  }
+  },
+  "targets": {
+    "agrivision-84da7": {
+      "hosting": {
+        "agrivision-main": [
+          "agrivision-84da7"
+        ],
+        "agrivision-application": [
+          "agrivision-application"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

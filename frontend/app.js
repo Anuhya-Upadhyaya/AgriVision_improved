@@ -3198,99 +3198,166 @@ async function renderTrendChart() {
    VISUALIZATION DASHBOARD
 ========================================================= */
 
-function renderVisualizationDashboard() {
+async function renderVisualizationDashboard() {
 
-  const empty =
-    $("visualizationEmpty");
+  const empty = $("visualizationEmpty");
+  const content = $("visualizationContent");
 
+  if (!currentUser) {
 
-  const content =
-    $("visualizationContent");
-
-
-  if (!lastResult) {
-
-    empty?.classList.remove(
-      "hidden"
-    );
-
-
-    content?.classList.add(
-      "hidden"
-    );
-
+    empty?.classList.remove("hidden");
+    content?.classList.add("hidden");
 
     return;
 
   }
 
+  try {
 
-  empty?.classList.add(
-    "hidden"
-  );
+    const records = await getUserHistory(50);
+
+    if (!records.length) {
+
+      empty?.classList.remove("hidden");
+      content?.classList.add("hidden");
+
+      return;
+
+    }
+
+    // Latest saved analysis
+    const latest = records[records.length - 1];
+
+    // Rebuild the result object from Firestore history
+    lastResult = {
+
+      predicted_nitrogen:
+        latest.predictedNitrogen,
+
+      status:
+        latest.status || "Analysis Complete",
+
+      model_agreement:
+        latest.modelAgreement || "",
+
+      model_predictions:
+        latest.modelPredictions || {},
+
+      recommendation:
+        latest.recommendation || "",
+
+      input_values: {
+
+        state:
+          latest.state || "",
+
+        district:
+          latest.district || "",
+
+        village:
+          latest.village || "",
+
+        crop:
+          latest.crop || "",
+
+        farm_size_acres:
+          latest.farmSize,
+
+        phosphorus:
+          latest.phosphorus,
+
+        potassium:
+          latest.potassium,
+
+        ph:
+          latest.ph,
+
+        rainfall:
+          latest.rainfall,
+
+        temperature:
+          latest.temperature
+
+      }
+
+    };
 
 
-  content?.classList.remove(
-    "hidden"
-  );
+    // Hide "No Analysis Available Yet"
+    empty?.classList.add("hidden");
+
+    // Show dashboard
+    content?.classList.remove("hidden");
 
 
-  const values =
-    lastResult.input_values || {};
+    const values =
+      lastResult.input_values || {};
 
 
-  $("vizPhosphorus").textContent =
-    formatNumber(
-      values.phosphorus
-    );
+    // Display latest analysis values
+    $("vizPhosphorus").textContent =
+      formatNumber(values.phosphorus);
+
+    $("vizPotassium").textContent =
+      formatNumber(values.potassium);
+
+    $("vizPh").textContent =
+      formatNumber(values.ph);
+
+    $("vizNitrogen").textContent =
+      formatNumber(
+        lastResult.predicted_nitrogen
+      );
 
 
-  $("vizPotassium").textContent =
-    formatNumber(
-      values.potassium
-    );
+    // Render charts after dashboard becomes visible
+    requestAnimationFrame(() => {
+
+      requestAnimationFrame(() => {
+
+        renderDashboardNutrientChart(
+          values
+        );
+
+        renderEnvironmentChart(
+          values
+        );
+
+      });
+
+    });
 
 
-  $("vizPh").textContent =
-    formatNumber(
-      values.ph
-    );
-
-
-  $("vizNitrogen").textContent =
-
-    formatNumber(
-
-      lastResult.predicted_nitrogen
-
-    );
-
-
-  requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-
-    renderDashboardNutrientChart(
+    // Soil/environment summary
+    renderSoilHealthSummary(
       values
     );
 
-    renderEnvironmentChart(
-      values
+
+    // Show saved model analysis
+    renderVisualizationFactors(
+      lastResult
     );
 
-  });
-});
 
-  renderSoilHealthSummary(
-    values
-  );
+  } catch (error) {
 
+    console.error(
+      "Visualization dashboard history error:",
+      error
+    );
 
-  renderVisualizationFactors(
-    lastResult
-  );
+    empty?.classList.remove(
+      "hidden"
+    );
+
+    content?.classList.add(
+      "hidden"
+    );
+
+  }
 
 }
-
 
 
 /* =========================================================
