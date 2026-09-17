@@ -1839,9 +1839,53 @@ function renderAgreementBadge(result) {
 
 function renderFarmInformation(result) {
 
-  const values =
-    result.input_values || {};
+  const values = {
+    ...(result.input_values || {})
+  };
 
+  values.state =
+    values.state ||
+    result.state ||
+    "";
+
+  values.district =
+    values.district ||
+    result.district ||
+    "";
+
+  values.village =
+    values.village ||
+    result.village ||
+    "";
+
+  values.crop =
+    values.crop ||
+    result.crop ||
+    "";
+
+  values.farm_size_acres =
+    values.farm_size_acres ??
+    result.farm_size_acres;
+
+  values.phosphorus =
+    values.phosphorus ??
+    result.phosphorus;
+
+  values.potassium =
+    values.potassium ??
+    result.potassium;
+
+  values.ph =
+    values.ph ??
+    result.ph;
+
+  values.rainfall =
+    values.rainfall ??
+    result.rainfall;
+
+  values.temperature =
+    values.temperature ??
+    result.temperature;
 
   const farmInfo = [
 
@@ -2062,158 +2106,159 @@ function renderDistrictInformation(result) {
    RECOMMENDATIONS
 ========================================================= */
 
+function recommendationToText(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map(item => recommendationToText(item))
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  if (typeof value === "object") {
+    return (
+      value.text ||
+      value.message ||
+      value.recommendation ||
+      value.action ||
+      value.solution ||
+      value.advice ||
+      value.description ||
+      Object.entries(value)
+        .map(([key, item]) => {
+          const text = recommendationToText(item);
+          return text ? `${key}: ${text}` : "";
+        })
+        .filter(Boolean)
+        .join(" — ")
+    );
+  }
+
+  return String(value);
+}
+
+
 function renderRecommendations(result) {
 
   const container =
     $("resultRecommendations");
 
-
   if (!container) return;
 
-
   const recommendations =
-
     result.recommendations_detailed ||
-
     result.recommendations ||
-
-    [
-
-      {
-
-        category:
-          "Soil Recommendation",
-
-        priority:
-          "Medium",
-
-        text:
-
-          result.recommendation ||
-
-          "No specific recommendation is available."
-
-      }
-
-    ];
-
+    result.recommendation ||
+    [];
 
   const normalizedRecommendations =
-
     Array.isArray(recommendations)
-
       ? recommendations
+      : [recommendations];
 
-      : [
+  if (!normalizedRecommendations.length) {
 
-          {
+    container.innerHTML = `
+      <div class="reco-card">
+        <div class="reco-head">
+          <span class="reco-category">
+            Soil Recommendation
+          </span>
+        </div>
 
-            category:
-              "Recommendation",
+        <p>
+          No specific recommendation is available.
+        </p>
+      </div>
+    `;
 
-            priority:
-              "Medium",
-
-            text:
-              String(recommendations)
-
-          }
-
-        ];
-
+    return;
+  }
 
   container.innerHTML =
-
     normalizedRecommendations
-
       .map(recommendation => {
 
+        const isObject =
+          recommendation !== null &&
+          typeof recommendation === "object";
+
         const priority =
+          isObject
+            ? recommendation.priority || "Medium"
+            : "Medium";
 
-          recommendation.priority ||
+        const category =
+          isObject
+            ? recommendation.category ||
+              "Soil Recommendation"
+            : "Soil Recommendation";
 
-          "Medium";
-
+        const text =
+          isObject
+            ? recommendationToText(
+                recommendation.text ||
+                recommendation.message ||
+                recommendation.recommendation ||
+                recommendation.action ||
+                recommendation.solution ||
+                recommendation.advice ||
+                recommendation.description ||
+                recommendation
+              )
+            : recommendationToText(
+                recommendation
+              );
 
         const color =
-
           PRIORITY_COLOR[priority] ||
-
           PRIORITY_COLOR.Medium;
 
-
         return `
-
           <div
-
             class="reco-card"
-
-            style="
-
-              border-left-color:
-
-              ${color};
-
-            "
-
+            style="border-left-color:${color};"
           >
 
             <div class="reco-head">
 
               <span class="reco-category">
-
-                ${escapeHtml(
-
-                  recommendation.category ||
-
-                  "Recommendation"
-
-                )}
-
+                ${escapeHtml(category)}
               </span>
 
-
               <span
-
                 class="reco-priority"
-
                 style="color:${color}"
-
               >
-
                 ${escapeHtml(priority)}
-
                 priority
-
               </span>
 
             </div>
 
-
             <p>
-
               ${escapeHtml(
-
-                recommendation.text ||
-
-                recommendation.message ||
-
-                ""
-
+                text ||
+                "No specific recommendation is available."
               )}
-
             </p>
 
           </div>
-
         `;
-
       })
-
       .join("");
-
 }
-
 
 
 /* =========================================================
@@ -2591,125 +2636,130 @@ async function savePrediction(result) {
 
   if (!currentUser) return;
 
-
   const values =
     result.input_values || {};
-
 
   try {
 
     await addDoc(
-
       collection(
-
         db,
-
         "prediction_history"
-
       ),
-
       {
 
         userId:
           currentUser.uid,
 
-
         createdAt:
           serverTimestamp(),
 
-
         state:
-          values.state || "",
-
+          values.state ||
+          result.state ||
+          "",
 
         district:
-          values.district || "",
-
+          values.district ||
+          result.district ||
+          "",
 
         village:
-          values.village || "",
-
+          values.village ||
+          result.village ||
+          "",
 
         crop:
-          values.crop || "",
-
+          values.crop ||
+          result.crop ||
+          "",
 
         farmSize:
-          values.farm_size_acres || null,
-
+          values.farm_size_acres ??
+          result.farm_size_acres ??
+          null,
 
         phosphorus:
-          values.phosphorus,
-
+          values.phosphorus ??
+          result.phosphorus ??
+          null,
 
         potassium:
-          values.potassium,
-
+          values.potassium ??
+          result.potassium ??
+          null,
 
         ph:
-          values.ph,
-
+          values.ph ??
+          result.ph ??
+          null,
 
         rainfall:
-          values.rainfall,
-
+          values.rainfall ??
+          result.rainfall ??
+          null,
 
         temperature:
-          values.temperature,
-
+          values.temperature ??
+          result.temperature ??
+          null,
 
         predictedNitrogen:
           result.predicted_nitrogen,
 
-
         status:
           result.status ||
-
           "Analysis Complete",
-
 
         recommendation:
           result.recommendation ||
-
           "",
 
+        recommendationsDetailed:
+          result.recommendations_detailed ||
+          result.recommendations ||
+          [],
+
+        causeEffect:
+          result.cause_effect ||
+          {},
+
+        districtAverages:
+          result.district_averages ||
+          result.district_reference ||
+          result.district_info ||
+          {},
 
         modelPredictions:
           result.model_predictions ||
-
+          result.models ||
           {},
-
 
         modelAgreement:
           result.model_agreement ||
+          result.agreement ||
+          "",
 
-          ""
+        inputValues:
+          values
 
       }
-
     );
-
 
     console.log(
       "Prediction history saved."
     );
 
-
   } catch (error) {
 
     console.warn(
-
       "Could not save prediction history:",
-
       error
-
     );
 
   }
 
 }
-
-
 
 /* =========================================================
    GET USER HISTORY
@@ -3200,8 +3250,11 @@ async function renderTrendChart() {
 
 async function renderVisualizationDashboard() {
 
-  const empty = $("visualizationEmpty");
-  const content = $("visualizationContent");
+  const empty =
+    $("visualizationEmpty");
+
+  const content =
+    $("visualizationContent");
 
   if (!currentUser) {
 
@@ -3209,12 +3262,12 @@ async function renderVisualizationDashboard() {
     content?.classList.add("hidden");
 
     return;
-
   }
 
   try {
 
-    const records = await getUserHistory(50);
+    const records =
+      await getUserHistory(50);
 
     if (!records.length) {
 
@@ -3222,43 +3275,71 @@ async function renderVisualizationDashboard() {
       content?.classList.add("hidden");
 
       return;
-
     }
 
-    // Latest saved analysis
-    const latest = records[records.length - 1];
+    /*
+     * Records are already sorted chronologically
+     * by getUserHistory().
+     */
 
-    // Rebuild the result object from Firestore history
+    const latest =
+      records[records.length - 1];
+
+    /*
+     * Rebuild the latest result using all
+     * information saved in Firestore.
+     */
+
     lastResult = {
 
       predicted_nitrogen:
         latest.predictedNitrogen,
 
       status:
-        latest.status || "Analysis Complete",
+        latest.status ||
+        "Analysis Complete",
 
       model_agreement:
-        latest.modelAgreement || "",
+        latest.modelAgreement ||
+        "",
 
       model_predictions:
-        latest.modelPredictions || {},
+        latest.modelPredictions ||
+        {},
 
       recommendation:
-        latest.recommendation || "",
+        latest.recommendation ||
+        "",
+
+      recommendations_detailed:
+        latest.recommendationsDetailed ||
+        [],
+
+      cause_effect:
+        latest.causeEffect ||
+        {},
+
+      district_averages:
+        latest.districtAverages ||
+        {},
 
       input_values: {
 
         state:
-          latest.state || "",
+          latest.state ||
+          "",
 
         district:
-          latest.district || "",
+          latest.district ||
+          "",
 
         village:
-          latest.village || "",
+          latest.village ||
+          "",
 
         crop:
-          latest.crop || "",
+          latest.crop ||
+          "",
 
         farm_size_acres:
           latest.farmSize,
@@ -3282,19 +3363,16 @@ async function renderVisualizationDashboard() {
 
     };
 
-
-    // Hide "No Analysis Available Yet"
     empty?.classList.add("hidden");
-
-    // Show dashboard
     content?.classList.remove("hidden");
-
 
     const values =
       lastResult.input_values || {};
 
+    /*
+     * Latest analysis values.
+     */
 
-    // Display latest analysis values
     $("vizPhosphorus").textContent =
       formatNumber(values.phosphorus);
 
@@ -3309,8 +3387,10 @@ async function renderVisualizationDashboard() {
         lastResult.predicted_nitrogen
       );
 
+    /*
+     * Render latest-value charts.
+     */
 
-    // Render charts after dashboard becomes visible
     requestAnimationFrame(() => {
 
       requestAnimationFrame(() => {
@@ -3327,18 +3407,29 @@ async function renderVisualizationDashboard() {
 
     });
 
+    /*
+     * Latest soil/environment summary.
+     */
 
-    // Soil/environment summary
     renderSoilHealthSummary(
       values
     );
 
+    /*
+     * Latest model factors.
+     */
 
-    // Show saved model analysis
     renderVisualizationFactors(
       lastResult
     );
 
+    /*
+     * Render historical trend.
+     */
+
+    renderHistoricalVisualization(
+      records
+    );
 
   } catch (error) {
 
@@ -3359,7 +3450,202 @@ async function renderVisualizationDashboard() {
 
 }
 
+function renderHistoricalVisualization(records) {
 
+  if (!Array.isArray(records) ||
+      !records.length) {
+    return;
+  }
+
+  /*
+   * Use the most recent historical record
+   * for the dashboard's current values.
+   */
+
+  const latest =
+    records[records.length - 1];
+
+  /*
+   * Prediction confidence / model agreement.
+   */
+
+  const agreement =
+    latest.modelAgreement ||
+    "";
+
+  const agreementElement =
+    $("predictionAgreement");
+
+  if (agreementElement) {
+
+    agreementElement.textContent =
+      agreement || "Available";
+
+  }
+
+  /*
+   * Farm health score.
+   *
+   * This is a simple data-based indicator
+   * derived from the latest recorded values.
+   * It does not replace the ML prediction.
+   */
+
+  const phosphorus =
+    Number(latest.phosphorus);
+
+  const potassium =
+    Number(latest.potassium);
+
+  const ph =
+    Number(latest.ph);
+
+  const rainfall =
+    Number(latest.rainfall);
+
+  const temperature =
+    Number(latest.temperature);
+
+  const checks = [
+
+    Number.isFinite(phosphorus) &&
+      phosphorus >= 10 &&
+      phosphorus <= 120,
+
+    Number.isFinite(potassium) &&
+      potassium >= 50 &&
+      potassium <= 300,
+
+    Number.isFinite(ph) &&
+      ph >= 5.5 &&
+      ph <= 8.5,
+
+    Number.isFinite(rainfall) &&
+      rainfall >= 200 &&
+      rainfall <= 2000,
+
+    Number.isFinite(temperature) &&
+      temperature >= 15 &&
+      temperature <= 40
+
+  ];
+
+  const validCount =
+    checks.filter(Boolean).length;
+
+  const healthScore =
+    Math.round(
+      (validCount / checks.length) * 100
+    );
+
+  const healthElement =
+    $("farmHealthScore");
+
+  if (healthElement) {
+
+    healthElement.textContent =
+      `${healthScore}%`;
+
+  }
+
+  /*
+   * Historical nitrogen trend.
+   *
+   * Uses all saved analyses rather than
+   * only the latest analysis.
+   */
+
+  if (
+    typeof Chart !== "undefined" &&
+    $("soilTrendChart")
+  ) {
+
+    if (trendChartInstance) {
+      trendChartInstance.destroy();
+      trendChartInstance = null;
+    }
+
+    const labels =
+      records.map(
+        (item, index) => {
+
+          if (item.createdAt?.toDate) {
+
+            return item.createdAt
+              .toDate()
+              .toLocaleDateString();
+
+          }
+
+          return `Analysis ${index + 1}`;
+
+        }
+      );
+
+    const nitrogen =
+      records.map(
+        item =>
+          Number(
+            item.predictedNitrogen
+          ) || 0
+      );
+
+    trendChartInstance =
+      new Chart(
+        $("soilTrendChart").getContext("2d"),
+        {
+
+          type: "line",
+
+          data: {
+
+            labels,
+
+            datasets: [
+
+              {
+
+                label:
+                  "Predicted Nitrogen",
+
+                data:
+                  nitrogen,
+
+                tension:
+                  0.35,
+
+                fill:
+                  false
+
+              }
+
+            ]
+
+          },
+
+          options: {
+
+            responsive: true,
+
+            maintainAspectRatio:
+              false,
+
+            plugins: {
+
+              legend: {
+                display: true
+              }
+
+            }
+
+          }
+
+        }
+      );
+
+  }
+
+}
 /* =========================================================
    DASHBOARD NUTRIENT CHART
 ========================================================= */
@@ -3765,86 +4051,76 @@ function renderSoilHealthSummary(
    KEY INFLUENCING FACTORS
 ========================================================= */
 
-function renderVisualizationFactors(
-  result
-) {
+function renderVisualizationFactors(result) {
 
   const container =
     $("visualizationFactors");
 
-
   if (!container) return;
 
-
   const factors =
-
-    result.cause_effect
-
+    result?.cause_effect
       ?.contributing_factors ||
-
+    result?.causeEffect
+      ?.contributing_factors ||
     [];
 
-
-  if (!factors.length) {
+  if (!Array.isArray(factors) ||
+      !factors.length) {
 
     container.innerHTML = `
 
       <p class="muted">
-
-        The AgriVision ensemble evaluated all available
-
-        soil and environmental features.
-
+        No factor analysis was saved
+        for this analysis.
       </p>
 
     `;
 
-
     return;
-
   }
 
-
   container.innerHTML =
-
     factors
+      .map(factor => {
 
-      .map(factor => `
+        const factorName =
+          factor?.factor ||
+          factor?.name ||
+          "Soil / Environmental Factor";
 
-        <div class="factor-item">
+        const impact =
+          factor?.impact ||
+          factor?.description ||
+          "Analyzed";
 
-          <strong>
+        return `
 
-            ${escapeHtml(
+          <div class="factor-item">
 
-              factor.factor
+            <strong>
+              ${escapeHtml(
+                recommendationToText(
+                  factorName
+                )
+              )}
+            </strong>
 
-            )}
+            <span>
+              ${escapeHtml(
+                recommendationToText(
+                  impact
+                )
+              )}
+            </span>
 
-          </strong>
+          </div>
 
+        `;
 
-          <span>
-
-            ${escapeHtml(
-
-              factor.impact ||
-
-              "Analyzed"
-
-            )}
-
-          </span>
-
-        </div>
-
-      `)
-
+      })
       .join("");
-
 }
-
-
 
 /* =========================================================
    FIREBASE AUTH STATE
