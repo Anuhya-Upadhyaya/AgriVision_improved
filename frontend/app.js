@@ -2108,151 +2108,287 @@ function renderDistrictInformation(result) {
    RECOMMENDATIONS
 ========================================================= */
 
+/* =========================================================
+   RECOMMENDATIONS
+========================================================= */
+/* =========================================================
+   RECOMMENDATIONS
+========================================================= */
+
 function recommendationToText(value) {
+
   if (value === null || value === undefined) {
     return "";
   }
 
   if (typeof value === "string") {
+
     if (value.trim() === "[object Object]") {
       return "";
     }
 
-    return value;
+    return value.trim();
   }
 
-  if (typeof value === "number" || typeof value === "boolean") {
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     return String(value);
   }
 
   if (Array.isArray(value)) {
+
     return value
       .map(item => recommendationToText(item))
-      .filter(Boolean)
+      .filter(text => text.length > 0)
       .join(" ");
   }
 
   if (typeof value === "object") {
+
+    /*
+     * The backend recommendation objects normally look like:
+     *
+     * {
+     *   category: "...",
+     *   priority: "...",
+     *   text: "..."
+     * }
+     *
+     * Always extract the human-readable field first.
+     */
+
     const preferredFields = [
+
       "text",
       "message",
-      "recommendation",
       "recommendation_text",
+      "recommendation",
       "action",
       "solution",
       "advice",
       "description",
-      "details",
       "suggestion",
       "treatment",
+      "details",
       "reason",
       "reasoning"
+
     ];
 
     for (const field of preferredFields) {
-      if (
-        value[field] !== undefined &&
-        value[field] !== null
-      ) {
-        const text = recommendationToText(
-          value[field]
-        );
 
-        if (text) {
-          return text;
+      if (
+        value[field] !== null &&
+        value[field] !== undefined
+      ) {
+
+        const extracted =
+          recommendationToText(
+            value[field]
+          );
+
+        if (extracted) {
+          return extracted;
         }
+
       }
+
     }
 
-    return Object.entries(value)
-      .map(([key, item]) => {
-        const text = recommendationToText(item);
+    /*
+     * Last-resort recursive conversion.
+     */
 
-        return text
-          ? `${key}: ${text}`
-          : "";
+    return Object.entries(value)
+
+      .map(([key, item]) => {
+
+        /*
+         * Do not display presentation-only fields
+         * as part of the recommendation text.
+         */
+
+        if (
+          key === "category" ||
+          key === "priority"
+        ) {
+          return "";
+        }
+
+        const text =
+          recommendationToText(item);
+
+        if (!text) {
+          return "";
+        }
+
+        return text;
+
       })
+
       .filter(Boolean)
+
       .join(" — ");
   }
 
-  return String(value);
+  return "";
 }
 
 
 function renderRecommendations(result) {
-  const container = $("resultRecommendations");
 
-  if (!container) return;
+  const container =
+    $("resultRecommendations");
 
-  const recommendations =
-    result.recommendations_detailed ??
-    result.recommendations ??
-    result.recommendation ??
-    [];
+  if (!container) {
+    return;
+  }
+
+
+  /*
+   * Prefer the backend's detailed recommendations.
+   */
+
+  let recommendations =
+    result?.recommendations_detailed;
+
+  /*
+   * Fallbacks for older backend responses.
+   */
+
+  if (
+    recommendations === null ||
+    recommendations === undefined
+  ) {
+
+    recommendations =
+      result?.recommendations;
+
+  }
+
+  if (
+    recommendations === null ||
+    recommendations === undefined
+  ) {
+
+    recommendations =
+      result?.recommendation;
+
+  }
+
+
+  /*
+   * Normalize a single recommendation into an array.
+   */
 
   const normalizedRecommendations =
     Array.isArray(recommendations)
       ? recommendations
       : [recommendations];
 
+
+  /*
+   * Remove empty/null recommendations.
+   */
+
   const validRecommendations =
     normalizedRecommendations.filter(
-      item =>
-        item !== null &&
-        item !== undefined
+      recommendation =>
+        recommendation !== null &&
+        recommendation !== undefined
     );
 
+
   if (!validRecommendations.length) {
+
     container.innerHTML = `
+
       <div class="reco-card">
+
         <div class="reco-head">
+
           <span class="reco-category">
             Soil Recommendation
           </span>
+
         </div>
 
         <p>
           No specific recommendation is available.
         </p>
+
       </div>
+
     `;
 
     return;
   }
 
+
   container.innerHTML =
+
     validRecommendations
+
       .map(recommendation => {
 
         const isObject =
           recommendation !== null &&
           typeof recommendation === "object";
 
+
+        /*
+         * Extract priority safely.
+         */
+
         const priority =
+
           isObject
+
             ? recommendationToText(
                 recommendation.priority
               ) || "Medium"
+
             : "Medium";
 
+
+        /*
+         * Extract category safely.
+         */
+
         const category =
+
           isObject
+
             ? recommendationToText(
-                recommendation.category
+                recommendation.category ||
+                recommendation.title
               ) || "Soil Recommendation"
+
             : "Soil Recommendation";
+
+
+        /*
+         * Extract ONLY readable recommendation text.
+         *
+         * This is the important part that prevents
+         * [object Object] from reaching the HTML.
+         */
 
         const text =
           recommendationToText(
             recommendation
           );
 
+
         const color =
           PRIORITY_COLOR[priority] ||
           PRIORITY_COLOR.Medium;
 
+
         return `
+
           <div
             class="reco-card"
             style="border-left-color:${color};"
@@ -2266,7 +2402,7 @@ function renderRecommendations(result) {
 
               <span
                 class="reco-priority"
-                style="color:${color}"
+                style="color:${color};"
               >
                 ${escapeHtml(priority)}
                 priority
@@ -2282,8 +2418,11 @@ function renderRecommendations(result) {
             </p>
 
           </div>
+
         `;
+
       })
+
       .join("");
 }
 /* =========================================================
