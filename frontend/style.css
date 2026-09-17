@@ -959,3 +959,42 @@ input[type="date"],input[type="file"]{width:100%;margin-top:7px;padding:12px 14p
   }
 
 }
+
+/* =========================================================
+   SOIL HEALTH SUMMARY + KEY INFLUENCING FACTORS
+   STACKED VERTICALLY
+========================================================= */
+
+.summary-card {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.summary-card + .section-card {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.summary-card,
+.summary-card + .section-card {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .summary-card {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .summary-card + .section-card {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+}
