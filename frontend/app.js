@@ -2109,29 +2109,23 @@ function renderDistrictInformation(result) {
 ========================================================= */
 
 function recommendationToText(value) {
-
   if (value === null || value === undefined) {
     return "";
   }
 
   if (typeof value === "string") {
-
     if (value.trim() === "[object Object]") {
       return "";
     }
 
-    return value.trim();
+    return value;
   }
 
-  if (
-    typeof value === "number" ||
-    typeof value === "boolean"
-  ) {
+  if (typeof value === "number" || typeof value === "boolean") {
     return String(value);
   }
 
   if (Array.isArray(value)) {
-
     return value
       .map(item => recommendationToText(item))
       .filter(Boolean)
@@ -2139,9 +2133,7 @@ function recommendationToText(value) {
   }
 
   if (typeof value === "object") {
-
     const preferredFields = [
-
       "text",
       "message",
       "recommendation",
@@ -2151,53 +2143,37 @@ function recommendationToText(value) {
       "advice",
       "description",
       "details",
-      "reason",
-      "reasoning",
       "suggestion",
-      "treatment"
-
+      "treatment",
+      "reason",
+      "reasoning"
     ];
 
     for (const field of preferredFields) {
-
       if (
         value[field] !== undefined &&
         value[field] !== null
       ) {
-
-        const text =
-          recommendationToText(
-            value[field]
-          );
+        const text = recommendationToText(
+          value[field]
+        );
 
         if (text) {
           return text;
         }
-
       }
-
     }
 
-    const parts = Object.entries(value)
+    return Object.entries(value)
       .map(([key, item]) => {
+        const text = recommendationToText(item);
 
-        const text =
-          recommendationToText(item);
-
-        if (!text) {
-          return "";
-        }
-
-        return `${key}: ${text}`;
-
+        return text
+          ? `${key}: ${text}`
+          : "";
       })
-      .filter(Boolean);
-
-    if (parts.length) {
-      return parts.join(" — ");
-    }
-
-    return "";
+      .filter(Boolean)
+      .join(" — ");
   }
 
   return String(value);
@@ -2205,105 +2181,78 @@ function recommendationToText(value) {
 
 
 function renderRecommendations(result) {
-
-  const container =
-    $("resultRecommendations");
+  const container = $("resultRecommendations");
 
   if (!container) return;
 
-
   const recommendations =
-
     result.recommendations_detailed ??
     result.recommendations ??
     result.recommendation ??
     [];
 
-
   const normalizedRecommendations =
-
     Array.isArray(recommendations)
-
       ? recommendations
-
       : [recommendations];
 
+  const validRecommendations =
+    normalizedRecommendations.filter(
+      item =>
+        item !== null &&
+        item !== undefined
+    );
 
-  if (!normalizedRecommendations.length) {
-
+  if (!validRecommendations.length) {
     container.innerHTML = `
-
       <div class="reco-card">
-
         <div class="reco-head">
-
           <span class="reco-category">
             Soil Recommendation
           </span>
-
         </div>
 
         <p>
           No specific recommendation is available.
         </p>
-
       </div>
-
     `;
 
     return;
   }
 
-
   container.innerHTML =
-
-    normalizedRecommendations
-
+    validRecommendations
       .map(recommendation => {
 
         const isObject =
-
           recommendation !== null &&
-
           typeof recommendation === "object";
 
-
         const priority =
-
           isObject
-
-            ? recommendation.priority || "Medium"
-
+            ? recommendationToText(
+                recommendation.priority
+              ) || "Medium"
             : "Medium";
 
-
         const category =
-
           isObject
-
-            ? recommendation.category ||
-              recommendation.title ||
-              "Soil Recommendation"
-
+            ? recommendationToText(
+                recommendation.category
+              ) || "Soil Recommendation"
             : "Soil Recommendation";
 
-
         const text =
-
           recommendationToText(
             recommendation
           );
 
-
         const color =
-
           PRIORITY_COLOR[priority] ||
-
           PRIORITY_COLOR.Medium;
 
-
         return `
-
           <div
             class="reco-card"
             style="border-left-color:${color};"
@@ -2312,46 +2261,31 @@ function renderRecommendations(result) {
             <div class="reco-head">
 
               <span class="reco-category">
-
                 ${escapeHtml(category)}
-
               </span>
-
 
               <span
                 class="reco-priority"
                 style="color:${color}"
               >
-
                 ${escapeHtml(priority)}
                 priority
-
               </span>
 
             </div>
 
-
             <p>
-
               ${escapeHtml(
-
                 text ||
-
                 "No specific recommendation is available."
-
               )}
-
             </p>
 
           </div>
-
         `;
-
       })
-
       .join("");
 }
-
 /* =========================================================
    MODEL RESULTS
 ========================================================= */

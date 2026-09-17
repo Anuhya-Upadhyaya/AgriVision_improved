@@ -806,3 +806,156 @@ input[type="date"],input[type="file"]{width:100%;margin-top:7px;padding:12px 14p
   }
 
 }
+/* =========================================================
+   AGRIVISION TOP NAVIGATION
+   Same navigation position on desktop and mobile
+========================================================= */
+
+#appNav.app-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: auto;
+
+  width: 100%;
+  min-height: 64px;
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 8px 18px;
+
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid #dce8e1;
+  border-top: 0;
+
+  border-radius: 0 0 18px 18px;
+
+  box-shadow: 0 6px 24px rgba(20, 60, 40, 0.10);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+#appNav.app-nav button {
+  border: 0;
+  background: transparent;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  color: #527064;
+
+  font: inherit;
+
+  padding: 10px 18px;
+
+  border-radius: 12px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+#appNav.app-nav button:hover {
+  background: #f0f7f3;
+}
+
+#appNav.app-nav button.active {
+  background: #e7f5ed;
+  color: #1f7a4d;
+  font-weight: 700;
+}
+
+#appNav.app-nav button span {
+  line-height: 1;
+}
+
+#appNav.app-nav button strong {
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   MOBILE TOP NAVIGATION
+========================================================= */
+
+@media (max-width: 768px) {
+
+  #appNav.app-nav {
+    min-height: 60px;
+
+    padding: 6px 4px;
+
+    gap: 2px;
+
+    border-radius: 0 0 14px 14px;
+  }
+
+  #appNav.app-nav button {
+    flex: 1;
+
+    min-width: 0;
+
+    min-height: 48px;
+
+    padding: 5px 2px;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    border-radius: 10px;
+  }
+
+  #appNav.app-nav button span {
+    font-size: 18px;
+  }
+
+  #appNav.app-nav button strong {
+    font-size: 9px;
+
+    line-height: 1.1;
+
+    white-space: nowrap;
+  }
+
+  /* Prevent page content from going underneath the fixed nav */
+  body {
+    padding-top: 70px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+
+  #appNav.app-nav {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  #appNav.app-nav button strong {
+    font-size: 8px;
+  }
+
+  #appNav.app-nav button span {
+    font-size: 16px;
+  }
+
+}

@@ -429,7 +429,7 @@
     data-nav="dashboard"
     aria-label="Home - Dashboard"
   >
-    <span class="nav-icon">⌂</span>
+    <span class="nav-icon">🏠</span>
     <span class="nav-label">Home</span>
   </button>
 
@@ -438,7 +438,7 @@
     data-nav="analysis"
     aria-label="Analyze - Start a new soil analysis"
   >
-    <span class="nav-icon">⌁</span>
+    <span class="nav-icon">🧪</span>
     <span class="nav-label">Analyze</span>
   </button>
 
@@ -447,7 +447,7 @@
     data-nav="history"
     aria-label="Reports - View previous analyses"
   >
-    <span class="nav-icon">▤</span>
+    <span class="nav-icon">📋</span>
     <span class="nav-label">Reports</span>
   </button>
 
@@ -456,7 +456,7 @@
     data-nav="visualization"
     aria-label="Soil Health - View soil charts"
   >
-    <span class="nav-icon">◉</span>
+    <span class="nav-icon">🌱</span>
     <span class="nav-label">Soil Health</span>
   </button>
 
@@ -465,7 +465,7 @@
     data-nav="profile"
     aria-label="Profile - Account settings"
   >
-    <span class="nav-icon">●</span>
+    <span class="nav-icon">👤</span>
     <span class="nav-label">Profile</span>
   </button>
 
@@ -1867,11 +1867,6 @@
 </section>
 
 
-
-<!-- =====================================================
-     VISUALIZATION DASHBOARD
-===================================================== -->
-
 <!-- =====================================================
      VISUALIZATION DASHBOARD
 ===================================================== -->
@@ -2412,104 +2407,6 @@
   font-weight: 700;
   white-space: nowrap;
 }
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 768px) {
-
-  #appNav {
-    display: none !important;
-  }
-
-  .bottom-nav {
-    position: fixed;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    align-items: stretch;
-
-    left: 10px;
-    right: 10px;
-    bottom: calc(10px + env(safe-area-inset-bottom));
-
-    min-height: 68px;
-
-    padding: 7px 5px;
-
-    background: rgba(255, 255, 255, 0.97);
-    border: 1px solid #dce9e1;
-    border-radius: 22px;
-
-    box-shadow:
-      0 8px 30px rgba(31, 122, 77, 0.16);
-
-    z-index: 9999;
-
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
-
-  .bottom-nav button {
-    position: relative;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    gap: 4px;
-
-    min-width: 0;
-    min-height: 54px;
-
-    border-radius: 16px;
-  }
-
-  .bottom-nav .nav-icon {
-    font-size: 20px;
-    height: 23px;
-  }
-
-  .bottom-nav .nav-label {
-    font-size: 10px;
-    line-height: 1.1;
-    font-weight: 700;
-    text-align: center;
-  }
-
-  .bottom-nav button.active {
-    color: #1f7a4d;
-    background: #e5f5ec;
-  }
-
-  .bottom-nav button.active::after {
-    content: "";
-
-    position: absolute;
-
-    bottom: 3px;
-
-    width: 18px;
-    height: 3px;
-
-    border-radius: 999px;
-
-    background: #1f7a4d;
-  }
-
-  /* Prevent content from being hidden behind bottom nav */
-  body {
-    padding-bottom: 95px;
-  }
-
-  .view {
-    padding-bottom: 90px;
-  }
-
-}
-
 
 /* =====================================================
    CUSTOM AGRIVISION LOGO
