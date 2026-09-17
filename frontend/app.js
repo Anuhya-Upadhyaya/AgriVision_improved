@@ -1719,29 +1719,32 @@ async function handleAnalysisSubmit(event) {
     renderFarmInformation(result);
     renderDistrictInformation(result);
     renderRecommendations(result);
-    renderModelResults(result);
-    renderNutrientChart(result);
-    renderCauseChart(result.cause_effect);
+        renderModelResults(result);
 
     if ($("finalPrediction")) {
-
       $("finalPrediction").textContent =
         `${formatNumber(result.predicted_nitrogen)} kg/ha`;
-
     }
 
     if ($("resultStatus")) {
-
       $("resultStatus").textContent =
         `Nitrogen Status: ${result.status || "—"}`;
-
     }
 
-    // Best-effort: history saving must never block the farmer from
-    // seeing a prediction they already successfully received.
+    // Save the complete analysis before leaving this function.
     await savePrediction(result);
 
+    // Show the result view BEFORE creating charts.
+    // Chart.js needs the canvas to be visible and have dimensions.
     showView("resultView");
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        renderNutrientChart(result);
+        renderCauseChart(result.cause_effect);
+      });
+    });
+
 
   } catch (error) {
 
@@ -2354,11 +2357,20 @@ function renderNutrientChart(result) {
   }
 
 
-  const canvas =
+    const canvas =
     $("nutrientChart");
 
-
   if (!canvas) return;
+
+  const chartContainer =
+    canvas.parentElement;
+
+  if (chartContainer) {
+    chartContainer.style.height =
+      "280px";
+    chartContainer.style.position =
+      "relative";
+  }
 
 
   if (nutrientChartInstance) {
@@ -2489,11 +2501,20 @@ function renderCauseChart(causeEffect) {
   }
 
 
-  const canvas =
+    const canvas =
     $("causeChart");
 
-
   if (!canvas) return;
+
+  const chartContainer =
+    canvas.parentElement;
+
+  if (chartContainer) {
+    chartContainer.style.height =
+      "300px";
+    chartContainer.style.position =
+      "relative";
+  }
 
 
   if (causeChartInstance) {
@@ -3386,6 +3407,7 @@ async function renderVisualizationDashboard() {
       formatNumber(
         lastResult.predicted_nitrogen
       );
+    renderPhGauge(values.ph);
 
     /*
      * Render latest-value charts.
@@ -3469,20 +3491,34 @@ function renderHistoricalVisualization(records) {
    * Prediction confidence / model agreement.
    */
 
-  const agreement =
+    const agreement =
     latest.modelAgreement ||
-    "";
+    {};
 
   const agreementElement =
     $("predictionAgreement");
 
   if (agreementElement) {
+    if (
+      agreement !== null &&
+      typeof agreement === "object"
+    ) {
+      const level =
+        agreement.level ||
+        "Available";
 
-    agreementElement.textContent =
-      agreement || "Available";
+      const modelsUsed =
+        agreement.modelsUsed;
 
+      agreementElement.textContent =
+        modelsUsed
+          ? `${level} (${modelsUsed} models)`
+          : level;
+    } else {
+      agreementElement.textContent =
+        String(agreement || "Available");
+    }
   }
-
   /*
    * Farm health score.
    *
@@ -3548,103 +3584,6 @@ function renderHistoricalVisualization(records) {
 
   }
 
-  /*
-   * Historical nitrogen trend.
-   *
-   * Uses all saved analyses rather than
-   * only the latest analysis.
-   */
-
-  if (
-    typeof Chart !== "undefined" &&
-    $("soilTrendChart")
-  ) {
-
-    if (trendChartInstance) {
-      trendChartInstance.destroy();
-      trendChartInstance = null;
-    }
-
-    const labels =
-      records.map(
-        (item, index) => {
-
-          if (item.createdAt?.toDate) {
-
-            return item.createdAt
-              .toDate()
-              .toLocaleDateString();
-
-          }
-
-          return `Analysis ${index + 1}`;
-
-        }
-      );
-
-    const nitrogen =
-      records.map(
-        item =>
-          Number(
-            item.predictedNitrogen
-          ) || 0
-      );
-
-    trendChartInstance =
-      new Chart(
-        $("soilTrendChart").getContext("2d"),
-        {
-
-          type: "line",
-
-          data: {
-
-            labels,
-
-            datasets: [
-
-              {
-
-                label:
-                  "Predicted Nitrogen",
-
-                data:
-                  nitrogen,
-
-                tension:
-                  0.35,
-
-                fill:
-                  false
-
-              }
-
-            ]
-
-          },
-
-          options: {
-
-            responsive: true,
-
-            maintainAspectRatio:
-              false,
-
-            plugins: {
-
-              legend: {
-                display: true
-              }
-
-            }
-
-          }
-
-        }
-      );
-
-  }
-
 }
 /* =========================================================
    DASHBOARD NUTRIENT CHART
@@ -3672,6 +3611,15 @@ function renderDashboardNutrientChart(
 
   if (!canvas) return;
 
+  const chartContainer =
+    canvas.parentElement;
+
+  if (chartContainer) {
+    chartContainer.style.height =
+      "260px";
+    chartContainer.style.position =
+      "relative";
+  }
 
   if (dashboardNutrientChartInstance) {
 
@@ -3793,6 +3741,15 @@ function renderEnvironmentChart(
 
 
   if (!canvas) return;
+  const chartContainer =
+    canvas.parentElement;
+
+  if (chartContainer) {
+    chartContainer.style.height =
+      "260px";
+    chartContainer.style.position =
+      "relative";
+  }
 
 
   if (environmentChartInstance) {
@@ -3882,7 +3839,81 @@ function renderEnvironmentChart(
 }
 
 
+/* =========================================================
+   SOIL PH GAUGE
+========================================================= */
 
+function renderPhGauge(value) {
+  const gauge =
+    $("phGauge");
+
+  const valueElement =
+    $("phGaugeValue");
+
+  const statusElement =
+    $("phGaugeStatus");
+
+  if (
+    !gauge ||
+    !valueElement ||
+    !statusElement
+  ) {
+    return;
+  }
+
+  const ph =
+    Number(value);
+
+  if (!Number.isFinite(ph)) {
+    valueElement.textContent = "--";
+    statusElement.textContent = "--";
+    return;
+  }
+
+  let status = "Neutral";
+
+  if (ph < 5.5) {
+    status = "Strongly acidic";
+  } else if (ph < 6.5) {
+    status = "Slightly acidic";
+  } else if (ph <= 7.5) {
+    status = "Neutral";
+  } else if (ph <= 8.5) {
+    status = "Slightly alkaline";
+  } else {
+    status = "Alkaline";
+  }
+
+  const minimum = 4;
+  const maximum = 9;
+
+  const percentage =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        ((ph - minimum) /
+          (maximum - minimum)) *
+          100
+      )
+    );
+
+  const degrees =
+    percentage * 3.6;
+
+  gauge.style.background =
+    `conic-gradient(
+      from 270deg,
+      #e8eeee 0deg ${degrees}deg,
+      #e8eeee ${degrees}deg 360deg
+    )`;
+
+  valueElement.textContent =
+    ph.toFixed(2);
+
+  statusElement.textContent =
+    status;
+}
 /* =========================================================
    SOIL HEALTH SUMMARY
 ========================================================= */
