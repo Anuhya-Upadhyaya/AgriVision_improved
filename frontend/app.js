@@ -1791,49 +1791,6 @@ $("newAnalysis")?.addEventListener(
 
   }
 );
-/* =========================================================
-   MODEL AGREEMENT
-========================================================= */
-
-function renderAgreementBadge(result) {
-
-  const badge =
-    $("agreementBadge");
-
-
-  if (!badge) return;
-
-
-  const agreement =
-
-    result.model_agreement ||
-
-    result.agreement;
-
-
-  if (!agreement) {
-
-    badge.classList.add(
-      "hidden"
-    );
-
-
-    return;
-
-  }
-
-
-  badge.textContent =
-    agreement;
-
-
-  badge.classList.remove(
-    "hidden"
-  );
-
-}
-
-
 
 /* =========================================================
    FARM INFORMATION
