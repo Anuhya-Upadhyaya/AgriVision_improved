@@ -1713,8 +1713,6 @@ async function handleAnalysisSubmit(event) {
     }
 
     lastResult = result;
-
-    renderAgreementBadge(result);
     renderFarmInformation(result);
     renderDistrictInformation(result);
     renderRecommendations(result);
