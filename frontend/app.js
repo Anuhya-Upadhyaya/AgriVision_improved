@@ -5,19 +5,14 @@
 import { auth, db } from "./firebase-config.js";
 
 import {
-
   createUserWithEmailAndPassword,
-
   signInWithEmailAndPassword,
-
   updateProfile,
-
   sendPasswordResetEmail,
-
   onAuthStateChanged,
-
-  signOut
-
+  signOut,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
 
@@ -69,7 +64,20 @@ const API_RETRY_DELAY = 4000;
 
 const $ = id => document.getElementById(id);
 
+/* =========================================================
+   REMEMBER LOGIN
+========================================================= */
 
+const authPersistenceReady =
+  setPersistence(
+    auth,
+    browserLocalPersistence
+  ).catch(error => {
+    console.error(
+      "Unable to enable persistent login:",
+      error
+    );
+  });
 
 /* =========================================================
    GLOBAL APPLICATION STATE
@@ -1194,19 +1202,14 @@ $("loginForm")?.addEventListener(
 
 
     try {
+      await authPersistenceReady;
 
       await signInWithEmailAndPassword(
-
         auth,
-
         email,
-
         password
-
       );
-
-
-    } catch (error) {
+    }catch (error) {
 
       showMessage(
 
@@ -1307,17 +1310,13 @@ $("signupForm")?.addEventListener(
 
 
     try {
+      await authPersistenceReady;
 
       const credential =
-
         await createUserWithEmailAndPassword(
-
           auth,
-
           email,
-
           password
-
         );
 
 
@@ -2110,19 +2109,29 @@ function renderDistrictInformation(result) {
 ========================================================= */
 
 function recommendationToText(value) {
+
   if (value === null || value === undefined) {
     return "";
   }
 
   if (typeof value === "string") {
-    return value;
+
+    if (value.trim() === "[object Object]") {
+      return "";
+    }
+
+    return value.trim();
   }
 
-  if (typeof value === "number" || typeof value === "boolean") {
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     return String(value);
   }
 
   if (Array.isArray(value)) {
+
     return value
       .map(item => recommendationToText(item))
       .filter(Boolean)
@@ -2130,22 +2139,65 @@ function recommendationToText(value) {
   }
 
   if (typeof value === "object") {
-    return (
-      value.text ||
-      value.message ||
-      value.recommendation ||
-      value.action ||
-      value.solution ||
-      value.advice ||
-      value.description ||
-      Object.entries(value)
-        .map(([key, item]) => {
-          const text = recommendationToText(item);
-          return text ? `${key}: ${text}` : "";
-        })
-        .filter(Boolean)
-        .join(" — ")
-    );
+
+    const preferredFields = [
+
+      "text",
+      "message",
+      "recommendation",
+      "recommendation_text",
+      "action",
+      "solution",
+      "advice",
+      "description",
+      "details",
+      "reason",
+      "reasoning",
+      "suggestion",
+      "treatment"
+
+    ];
+
+    for (const field of preferredFields) {
+
+      if (
+        value[field] !== undefined &&
+        value[field] !== null
+      ) {
+
+        const text =
+          recommendationToText(
+            value[field]
+          );
+
+        if (text) {
+          return text;
+        }
+
+      }
+
+    }
+
+    const parts = Object.entries(value)
+      .map(([key, item]) => {
+
+        const text =
+          recommendationToText(item);
+
+        if (!text) {
+          return "";
+        }
+
+        return `${key}: ${text}`;
+
+      })
+      .filter(Boolean);
+
+    if (parts.length) {
+      return parts.join(" — ");
+    }
+
+    return "";
   }
 
   return String(value);
@@ -2159,76 +2211,99 @@ function renderRecommendations(result) {
 
   if (!container) return;
 
+
   const recommendations =
-    result.recommendations_detailed ||
-    result.recommendations ||
-    result.recommendation ||
+
+    result.recommendations_detailed ??
+    result.recommendations ??
+    result.recommendation ??
     [];
 
+
   const normalizedRecommendations =
+
     Array.isArray(recommendations)
+
       ? recommendations
+
       : [recommendations];
+
 
   if (!normalizedRecommendations.length) {
 
     container.innerHTML = `
+
       <div class="reco-card">
+
         <div class="reco-head">
+
           <span class="reco-category">
             Soil Recommendation
           </span>
+
         </div>
 
         <p>
           No specific recommendation is available.
         </p>
+
       </div>
+
     `;
 
     return;
   }
 
+
   container.innerHTML =
+
     normalizedRecommendations
+
       .map(recommendation => {
 
         const isObject =
+
           recommendation !== null &&
+
           typeof recommendation === "object";
 
+
         const priority =
+
           isObject
+
             ? recommendation.priority || "Medium"
+
             : "Medium";
 
+
         const category =
+
           isObject
+
             ? recommendation.category ||
+              recommendation.title ||
               "Soil Recommendation"
+
             : "Soil Recommendation";
 
+
         const text =
-          isObject
-            ? recommendationToText(
-                recommendation.text ||
-                recommendation.message ||
-                recommendation.recommendation ||
-                recommendation.action ||
-                recommendation.solution ||
-                recommendation.advice ||
-                recommendation.description ||
-                recommendation
-              )
-            : recommendationToText(
-                recommendation
-              );
+
+          recommendationToText(
+            recommendation
+          );
+
 
         const color =
+
           PRIORITY_COLOR[priority] ||
+
           PRIORITY_COLOR.Medium;
 
+
         return `
+
           <div
             class="reco-card"
             style="border-left-color:${color};"
@@ -2237,32 +2312,45 @@ function renderRecommendations(result) {
             <div class="reco-head">
 
               <span class="reco-category">
+
                 ${escapeHtml(category)}
+
               </span>
+
 
               <span
                 class="reco-priority"
                 style="color:${color}"
               >
+
                 ${escapeHtml(priority)}
                 priority
+
               </span>
 
             </div>
 
+
             <p>
+
               ${escapeHtml(
+
                 text ||
+
                 "No specific recommendation is available."
+
               )}
+
             </p>
 
           </div>
+
         `;
+
       })
+
       .join("");
 }
-
 
 /* =========================================================
    MODEL RESULTS
